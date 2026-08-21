@@ -6,6 +6,8 @@
 #   ./install.sh --project            # link into ./.claude/skills of the current directory
 #   ./install.sh --project ~/code/app # link into that project's .claude/skills
 #   ./install.sh --copy               # copy instead of symlink (no live updates)
+#   ./install.sh --hooks              # also register the oversized-function hook
+#   ./install.sh --hooks --remove-hooks  # unregister that hook
 #
 # Symlinks are the default so editing this repo updates every install at once.
 set -euo pipefail
@@ -14,17 +16,24 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC_DIR="$REPO_DIR/skills"
 DEST_DIR="$HOME/.claude/skills"
 MODE="link"
+HOOKS="no"
+HOOK_ACTION=""
+SETTINGS=""
 SELECTED=()
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --project)
       if [[ ${2-} && ${2:0:1} != "-" ]]; then
-        DEST_DIR="$(cd "$2" && pwd)/.claude/skills"; shift 2
+        root="$(cd "$2" && pwd)"; shift 2
       else
-        DEST_DIR="$PWD/.claude/skills"; shift
+        root="$PWD"; shift
       fi
+      DEST_DIR="$root/.claude/skills"
+      SETTINGS="$root/.claude/settings.json"
       ;;
+    --hooks) HOOKS="yes"; shift ;;
+    --remove-hooks) HOOKS="yes"; HOOK_ACTION="--remove"; shift ;;
     --copy) MODE="copy"; shift ;;
     -h|--help) sed -n '2,12p' "${BASH_SOURCE[0]}"; exit 0 ;;
     -*) echo "unknown option: $1" >&2; exit 1 ;;
@@ -55,4 +64,11 @@ for name in "${SELECTED[@]}"; do
   fi
 done
 
-echo "Restart Claude Code, or run /doctor, to pick up new skills."
+if [[ "$HOOKS" == "yes" ]]; then
+  hook_args=()
+  [[ -n "$SETTINGS" ]] && hook_args+=(--settings "$SETTINGS")
+  [[ -n "$HOOK_ACTION" ]] && hook_args+=("$HOOK_ACTION")
+  python3 "$REPO_DIR/hooks/install_hook.py" "${hook_args[@]}"
+fi
+
+echo "Restart Claude Code, or run /doctor, to pick up new skills and hooks."
