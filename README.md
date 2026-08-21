@@ -8,7 +8,8 @@ them up quickly.
 ```
 skills/<skill-name>/SKILL.md   # one directory per skill
 hooks/oversized_function.py    # PostToolUse detector for long functions
-hooks/install_hook.py          # registers that hook in a settings.json
+hooks/comment_smell.py         # PostToolUse detector for comments and long names
+hooks/install_hook.py          # registers the hooks in a settings.json
 install.sh                     # link or copy skills, and register hooks
 ```
 
@@ -32,18 +33,26 @@ Restart Claude Code after installing.
 | Skill | Purpose |
 | --- | --- |
 | `oversized-function` | Refactor long functions by responsibility, not by line count. |
+| `self-documenting-names` | Rename instead of commenting. Seven words per name, two sentences per docstring. |
 
-## The oversized-function hook
+## Hooks
 
-A skill is advice I may or may not load. The hook makes the check deterministic.
+A skill is advice Claude may or may not load. A hook makes the check
+deterministic. Both hooks register as separate `PostToolUse` entries on
+`Edit|Write|MultiEdit`, so Claude Code runs them in parallel. Either one exits 2
+on a hit, which blocks the turn and feeds the finding back to Claude.
+
+Install both with `./install.sh --hooks`. Install one with
+`python3 hooks/install_hook.py --only oversized-function`.
+
+### oversized_function.py
 
 - Event: `PostToolUse` on `Edit|Write|MultiEdit`.
 - It parses the file that was just written and finds functions over 20 effective
   lines (blank lines and whole-line comments do not count).
 - Python uses the `ast` module. JavaScript and TypeScript use a brace counter that
   first blanks out strings and comments.
-- On a hit it exits 2. That blocks the turn and feeds the finding back to Claude,
-  which then applies the `oversized-function` skill.
+- On a hit it routes Claude into the `oversized-function` skill.
 
 Tuning:
 
@@ -59,6 +68,32 @@ Skipped by default: test files, `node_modules`, `dist`, `build`, `vendor`,
 
 The JS/TS detector is a heuristic, not a parser. It can miscount exotic syntax.
 Python is exact.
+
+### comment_smell.py
+
+Reads only the lines the edit **added**, from the tool payload's patch, from the
+old/new strings, or for `Write` from the last committed version. It reports:
+
+- An explanatory comment, on its own line or trailing code.
+- A docstring or JSDoc block over 2 sentences.
+- A declared name over 7 words. Python `test_*` functions are exempt.
+
+Never reported: tool directives (`# type:`, `# noqa`, `// @ts-`, `// eslint-…`),
+licence and copyright headers, and `TODO`/`FIXME`/`HACK`/`XXX` markers.
+
+Tuning:
+
+| What | How |
+| --- | --- |
+| Change the name limit | `CLAUDE_MAX_NAME_WORDS=5` |
+| Change the docstring limit | `CLAUDE_MAX_DOCSTRING_SENTENCES=1` |
+| Also block `TODO` markers | `CLAUDE_COMMENTS_ALLOW_TODO=0` |
+| Turn it off for one session | `CLAUDE_SKIP_COMMENT_CHECK=1` |
+| Allow one comment | Append `allow-comment` to that comment |
+
+Comments inside string literals are ignored, so a URL does not trip it. The
+scanner is per line, so a `#` or `//` inside an unterminated multi-line string
+can still be misread.
 
 ## Adding a skill
 

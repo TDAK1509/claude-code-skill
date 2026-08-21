@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
-"""Register the oversized-function hook in a Claude Code settings file.
+"""Register this repository's hooks in a Claude Code settings file.
 
-  python3 hooks/install_hook.py [--settings PATH] [--remove]
+  python3 hooks/install_hook.py [--settings PATH] [--only NAME] [--remove]
 
 Default settings file: ~/.claude/settings.json (applies to every project).
-The merge is idempotent: an existing entry for this hook is replaced.
+Each hook gets its own PostToolUse entry, so Claude Code runs them in
+parallel. The merge is idempotent and backs the settings file up first.
 """
 import argparse
 import json
 import os
 import sys
 
-HOOK_SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "oversized_function.py")
-MATCHER = "Edit|Write|MultiEdit"
+HOOKS_DIR = os.path.dirname(os.path.abspath(__file__))
 EVENT = "PostToolUse"
-MARKER = "oversized_function.py"
+MATCHER = "Edit|Write|MultiEdit"
+REGISTRY = {
+    "oversized-function": "oversized_function.py",
+    "self-documenting-names": "comment_smell.py",
+}
 
 
 def load(path):
@@ -25,10 +29,13 @@ def load(path):
     return json.loads(text) if text else {}
 
 
-def strip_existing(entries):
+def strip_ours(entries, scripts):
     kept = []
     for entry in entries:
-        hooks = [h for h in entry.get("hooks", []) if MARKER not in str(h.get("command", ""))]
+        hooks = [
+            hook for hook in entry.get("hooks", [])
+            if not any(script in str(hook.get("command", "")) for script in scripts)
+        ]
         if not hooks:
             continue
         entry["hooks"] = hooks
@@ -36,26 +43,44 @@ def strip_existing(entries):
     return kept
 
 
+def entry_for(script):
+    return {
+        "matcher": MATCHER,
+        "hooks": [{"type": "command", "command": os.path.join(HOOKS_DIR, script)}],
+    }
+
+
+def write(path, settings):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    if os.path.exists(path):
+        backup = path + ".bak"
+        with open(path, encoding="utf-8") as source, open(backup, "w", encoding="utf-8") as target:
+            target.write(source.read())
+        print(f"backup written to {backup}")
+    with open(path, "w", encoding="utf-8") as handle:
+        json.dump(settings, handle, indent=2)
+        handle.write("\n")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--settings", default=os.path.expanduser("~/.claude/settings.json"))
+    parser.add_argument("--only", action="append", choices=sorted(REGISTRY), default=None)
     parser.add_argument("--remove", action="store_true")
     args = parser.parse_args()
 
+    names = args.only or sorted(REGISTRY)
+    scripts = [REGISTRY[name] for name in names]
     path = os.path.abspath(os.path.expanduser(args.settings))
     try:
         settings = load(path)
-    except json.JSONDecodeError as err:
-        sys.exit(f"{path} is not valid JSON: {err}. Fix it first; nothing was written.")
+    except json.JSONDecodeError as error:
+        sys.exit(f"{path} is not valid JSON: {error}. Fix it first; nothing was written.")
 
     events = settings.setdefault("hooks", {})
-    entries = strip_existing(events.get(EVENT, []))
-
+    entries = strip_ours(events.get(EVENT, []), scripts)
     if not args.remove:
-        entries.append({
-            "matcher": MATCHER,
-            "hooks": [{"type": "command", "command": HOOK_SCRIPT}],
-        })
+        entries += [entry_for(script) for script in scripts]
 
     if entries:
         events[EVENT] = entries
@@ -64,18 +89,9 @@ def main():
     if not events:
         settings.pop("hooks", None)
 
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    if os.path.exists(path):
-        backup = path + ".bak"
-        with open(backup, "w", encoding="utf-8") as handle:
-            handle.write(open(path, encoding="utf-8").read())
-        print(f"backup written to {backup}")
-    with open(path, "w", encoding="utf-8") as handle:
-        json.dump(settings, handle, indent=2)
-        handle.write("\n")
-
+    write(path, settings)
     verb = "removed from" if args.remove else "installed in"
-    print(f"oversized-function hook {verb} {path}")
+    print(f"{', '.join(names)} {verb} {path}")
 
 
 if __name__ == "__main__":
