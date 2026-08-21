@@ -35,6 +35,10 @@ Restart Claude Code after installing.
 | --- | --- |
 | `oversized-function` | Refactor long functions by responsibility, not by line count. |
 | `self-documenting-names` | Rename instead of commenting. Ten words per name, two sentences per docstring. |
+| `minimal-scope-plan` | Plan the smallest change that reaches the goal. Widen scope only for behaviour, security or performance. |
+
+Only the first two skills have hooks. `minimal-scope-plan` is judgement about
+work not yet done, so no deterministic check exists for it.
 
 ## Hooks
 
