@@ -3,7 +3,7 @@
 
 Reads the Claude Code hook payload on stdin, looks only at the lines the edit
 added, and exits 2 when it finds an explanatory comment, a docstring longer
-than two sentences, or an identifier of more than seven words.
+than two sentences, or an identifier of more than ten words.
 
 Escape hatch: put `allow-comment` on the comment line.
 Disable entirely: export CLAUDE_SKIP_COMMENT_CHECK=1
@@ -15,7 +15,7 @@ import re
 import subprocess
 import sys
 
-MAX_NAME_WORDS = int(os.environ.get("CLAUDE_MAX_NAME_WORDS", "7"))
+MAX_NAME_WORDS = int(os.environ.get("CLAUDE_MAX_NAME_WORDS", "10"))
 MAX_DOCSTRING_SENTENCES = int(os.environ.get("CLAUDE_MAX_DOCSTRING_SENTENCES", "2"))
 ALLOW_TODO = os.environ.get("CLAUDE_COMMENTS_ALLOW_TODO", "1") != "0"
 ALLOW_MARKER = "allow-comment"

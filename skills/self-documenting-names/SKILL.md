@@ -24,8 +24,8 @@ Long names beat comments. Do not fear a long name.
 - `retryCountAfterRateLimit` beats `n` plus a comment.
 - `isEligibleForVipDiscount` beats `flag` plus a comment.
 
-But long is not unlimited. **Seven words is the maximum.** Count words in
-`snake_case`, `camelCase` and `PascalCase` alike. A name that needs eight words
+But long is not unlimited. **Ten words is the maximum.** Count words in
+`snake_case`, `camelCase` and `PascalCase` alike. A name that needs eleven words
 is not a naming problem; it is a function doing two things. Split it — see the
 `oversized-function` skill.
 

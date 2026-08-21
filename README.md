@@ -33,7 +33,7 @@ Restart Claude Code after installing.
 | Skill | Purpose |
 | --- | --- |
 | `oversized-function` | Refactor long functions by responsibility, not by line count. |
-| `self-documenting-names` | Rename instead of commenting. Seven words per name, two sentences per docstring. |
+| `self-documenting-names` | Rename instead of commenting. Ten words per name, two sentences per docstring. |
 
 ## Hooks
 
@@ -76,7 +76,7 @@ old/new strings, or for `Write` from the last committed version. It reports:
 
 - An explanatory comment, on its own line or trailing code.
 - A docstring or JSDoc block over 2 sentences.
-- A declared name over 7 words. Python `test_*` functions are exempt.
+- A declared name over 10 words. Python `test_*` functions are exempt.
 
 Never reported: tool directives (`# type:`, `# noqa`, `// @ts-`, `// eslint-…`),
 licence and copyright headers, and `TODO`/`FIXME`/`HACK`/`XXX` markers.
@@ -85,7 +85,7 @@ Tuning:
 
 | What | How |
 | --- | --- |
-| Change the name limit | `CLAUDE_MAX_NAME_WORDS=5` |
+| Change the name limit | `CLAUDE_MAX_NAME_WORDS=7` |
 | Change the docstring limit | `CLAUDE_MAX_DOCSTRING_SENTENCES=1` |
 | Also block `TODO` markers | `CLAUDE_COMMENTS_ALLOW_TODO=0` |
 | Turn it off for one session | `CLAUDE_SKIP_COMMENT_CHECK=1` |
