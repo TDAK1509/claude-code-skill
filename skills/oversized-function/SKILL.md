@@ -1,0 +1,44 @@
+---
+name: oversized-function
+description: Refactor a function that is too long by finding its real responsibility boundaries instead of extracting helpers to hit a line count. Use when a function is over ~20 lines, when a linter or reviewer flags "function too long" / "too many lines" / "oversized function", or when the user asks to split, shorten, or clean up a long function or method.
+---
+
+# Oversized function
+
+Functions over 20 lines tend to bundle multiple responsibilities.
+Functions over 20 lines almost always carry more than one responsibility, and that
+is the smell to chase — not the line count itself.
+
+## Analyse responsibilities first
+
+Ask what distinct concerns this function handles. Then ask:
+
+1. Are these separate responsibilities that belong in different methods?
+2. Should this become a class with multiple methods?
+3. Can you group cohesive data into objects to reduce local variables?
+
+## Avoid mechanical extraction
+
+Pulling out a `helperA` / `helperB` purely to satisfy the threshold often hides the
+smell behind worse names and leaves the real shape untouched. Find true
+responsibility boundaries.
+
+## Inline before you split
+
+If responsibilities are tangled you may need to first inline methods to see the
+whole picture before redistributing. Think of this when reducing line count seems
+particularly hard — stepping backwards often opens up better possibilities.
+
+## The one-sentence test
+
+A concrete technique: write what the method does in one short sentence. Refactor
+until the code reads as close to that sentence as possible. If you cannot say what
+a method does in one sentence, it almost certainly has more than one
+responsibility.
+
+## Applying this
+
+- Name each responsibility out loud before you move any code.
+- Propose the target shape (methods, class, value objects) before editing.
+- Keep behaviour identical; run the existing tests after the refactor.
+- Report the one-sentence description of every method you end up with.
