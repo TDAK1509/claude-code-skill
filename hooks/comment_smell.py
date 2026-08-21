@@ -15,6 +15,9 @@ import re
 import subprocess
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from generated import is_generated
+
 MAX_NAME_WORDS = int(os.environ.get("CLAUDE_MAX_NAME_WORDS", "10"))
 MAX_DOCSTRING_SENTENCES = int(os.environ.get("CLAUDE_MAX_DOCSTRING_SENTENCES", "2"))
 ALLOW_TODO = os.environ.get("CLAUDE_COMMENTS_ALLOW_TODO", "1") != "0"
@@ -22,11 +25,6 @@ ALLOW_MARKER = "allow-comment"
 
 JS_SUFFIXES = (".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts")
 PY_SUFFIXES = (".py", ".pyi")
-
-SKIP_PATH = re.compile(
-    r"(^|/)(node_modules|dist|build|vendor|\.venv|venv|__pycache__|\.next)/"
-    r"|\.min\.js$"
-)
 
 TOOL_DIRECTIVE = re.compile(
     r"^\s*(?:#|//)\s*(?:"
@@ -278,7 +276,7 @@ def main():
     except (json.JSONDecodeError, ValueError):
         return 0
     path, lines = added_lines(payload)
-    if not path or SKIP_PATH.search(path):
+    if not path or is_generated(path):
         return 0
     if not path.endswith(PY_SUFFIXES + JS_SUFFIXES):
         return 0

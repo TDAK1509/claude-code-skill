@@ -15,16 +15,17 @@ import os
 import re
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from generated import is_generated
+
 THRESHOLD = int(os.environ.get("CLAUDE_MAX_FUNCTION_LINES", "20"))
 ALLOW_MARKER = "allow-long-function"
 
 JS_SUFFIXES = (".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts")
 PY_SUFFIXES = (".py", ".pyi")
 
-SKIP_PATH = re.compile(
-    r"(^|/)(node_modules|dist|build|vendor|\.venv|venv|__pycache__|\.next)/"
-    r"|\.min\.js$"
-    r"|(^|/)(tests?|__tests__|spec)/"
+TEST_PATH = re.compile(
+    r"(^|/)(tests?|__tests__|spec)/"
     r"|(^|/)test_[^/]*\.py$"
     r"|_test\.py$|conftest\.py$"
     r"|\.(test|spec)\.[jt]sx?$"
@@ -235,7 +236,7 @@ def edited_paths(payload):
 
 
 def analyse(path):
-    if SKIP_PATH.search(path):
+    if TEST_PATH.search(path) or is_generated(path):
         return []
     try:
         with open(path, encoding="utf-8", errors="replace") as handle:

@@ -36,6 +36,15 @@ until the code reads as close to that sentence as possible. If you cannot say wh
 a method does in one sentence, it almost certainly has more than one
 responsibility.
 
+## Generated files are out of scope
+
+Do not apply this rule to generated code: `openapi.json`, generated API clients
+and type definitions, `*.gen.ts`, `*.d.ts`, protobuf output, migrations, and any
+file whose header says it was generated.
+
+Never hand-edit that output. Change the schema, the template or the generator,
+then regenerate. The hooks skip these paths for the same reason.
+
 ## Applying this
 
 - Name each responsibility out loud before you move any code.

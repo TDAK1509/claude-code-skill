@@ -54,6 +54,15 @@ Rarely, meaning cannot live in a name: a non-obvious external constraint, a
 workaround for a third-party bug, a link to a specification. Write it as *why*,
 never as *what*, and keep it to one line.
 
+## Generated files are out of scope
+
+Do not apply this rule to generated code: `openapi.json`, generated API clients
+and type definitions, `*.gen.ts`, `*.d.ts`, protobuf output, migrations, and any
+file whose header says it was generated.
+
+Never hand-edit that output. Change the schema, the template or the generator,
+then regenerate. The hooks skip these paths for the same reason.
+
 ## Applying this
 
 - Before writing any comment, try three names first.
