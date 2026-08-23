@@ -1,12 +1,12 @@
 ---
 name: oversized-function
-description: Refactor a function that is too long by finding its real responsibility boundaries instead of extracting helpers to hit a line count. Use when a function is over ~20 lines, when a linter or reviewer flags "function too long" / "too many lines" / "oversized function", or when the user asks to split, shorten, or clean up a long function or method.
+description: Refactor a function that is too long by finding its real responsibility boundaries instead of extracting helpers to hit a line count. Use when a function is over ~12 lines, when a linter or reviewer flags "function too long" / "too many lines" / "oversized function", or when the user asks to split, shorten, or clean up a long function or method.
 ---
 
 # Oversized function
 
-Functions over 20 lines tend to bundle multiple responsibilities.
-Functions over 20 lines almost always carry more than one responsibility, and that
+Functions over 12 lines tend to bundle multiple responsibilities.
+Functions over 12 lines almost always carry more than one responsibility, and that
 is the smell to chase — not the line count itself.
 
 ## Analyse responsibilities first

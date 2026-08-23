@@ -54,7 +54,7 @@ Install both with `./install.sh --hooks`. Install one with
 ### oversized_function.py
 
 - Event: `PostToolUse` on `Edit|Write|MultiEdit`.
-- It parses the file that was just written and finds functions over 20 effective
+- It parses the file that was just written and finds functions over 12 effective
   lines (blank lines and whole-line comments do not count).
 - Python uses the `ast` module. JavaScript and TypeScript use a brace counter that
   first blanks out strings and comments.
@@ -64,7 +64,7 @@ Tuning:
 
 | What | How |
 | --- | --- |
-| Change the limit | `CLAUDE_MAX_FUNCTION_LINES=30` |
+| Change the limit | `CLAUDE_MAX_FUNCTION_LINES=20` |
 | Turn it off for one session | `CLAUDE_SKIP_FUNCTION_LENGTH=1` |
 | Allow one function | Put `allow-long-function` in a comment inside it |
 

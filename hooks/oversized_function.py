@@ -3,7 +3,7 @@
 
 Reads the Claude Code hook payload on stdin. When the file that was just
 edited contains a function over CLAUDE_MAX_FUNCTION_LINES effective lines
-(default 20), it writes an explanation to stderr and exits 2, which feeds the
+(default 12), it writes an explanation to stderr and exits 2, which feeds the
 message back to Claude and blocks the turn.
 
 Escape hatch: put `allow-long-function` in a comment inside the function.
@@ -18,7 +18,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generated import is_generated
 
-THRESHOLD = int(os.environ.get("CLAUDE_MAX_FUNCTION_LINES", "20"))
+THRESHOLD = int(os.environ.get("CLAUDE_MAX_FUNCTION_LINES", "12"))
 ALLOW_MARKER = "allow-long-function"
 
 JS_SUFFIXES = (".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts")
