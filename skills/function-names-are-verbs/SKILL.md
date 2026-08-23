@@ -41,9 +41,10 @@ The verb carries the contract. A wrong verb is worse than a noun.
 - `update`, `set`, `apply` change state.
 - `ensure` makes a condition true and is safe to call twice.
 
-Never use `handle`, `process`, `manage` or `do`. They name no action. A function
-called `processOrder` hides how many things it does — see the
-`oversized-function` skill.
+`handle`, `process` and `manage` are weak. They fit anything, so they stay true
+however much the function grows. Prefer the specific verb when one exists:
+`chargeOrder` over `processOrder`. When you keep the weak verb, check the length
+— see the `oversized-function` skill.
 
 ## The exceptions
 
