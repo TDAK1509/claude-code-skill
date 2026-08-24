@@ -1,0 +1,70 @@
+---
+name: clean-code-implementation
+description: The rules that bind every line of code you write in this codebase - verb function names, functions under the line limit, and names instead of comments. Use whenever you write, edit or review code, before you start an implementation, when a hook blocks an edit, or when you are about to open a pull request.
+---
+
+# Clean code implementation
+
+Three rules bind every line you write. They are one habit, not three checklists.
+
+| Rule | Skill | Enforced by |
+| --- | --- | --- |
+| A function name is a verb | `function-names-are-verbs` | nothing — you |
+| A function is short | `oversized-function` | `oversized_function.py` |
+| A name replaces a comment | `self-documenting-names` | `comment_smell.py` |
+
+Load the skill itself when a rule bites. This page is the index, not the
+content.
+
+## Not optional
+
+These are required rules. They are not style preferences.
+
+Two of them block your turn. The third does not, which makes it the one you will
+drop first. It is not weaker.
+
+## They are the same rule
+
+Each one pushes meaning into a name.
+
+- The verb says what the function does.
+- The line limit says it does only that.
+- The absent comment says the name was enough.
+
+A failure in one shows up as a failure in the others. A function you cannot name
+with one verb is a function doing two things, and it is the function you were
+about to write a comment above.
+
+## The order to apply them
+
+1. **Name it first.** Write the verb before the body. `chargeOrder`, not
+   `orderProcessing`. If no single verb fits, you have two functions — stop and
+   split before you write either.
+2. **Write the body.** Watch the length. Passing 12 effective lines is a signal
+   to name the responsibilities, not a signal to extract `helperA`.
+3. **Delete the comments.** Every comment you wanted is a name you did not pick.
+   Move the meaning, then remove the comment.
+
+## Before you finish
+
+Read your diff and ask three questions.
+
+- Does every new function name start with a verb that is true?
+- Is any new function over the limit without a written reason?
+- Does any new comment say what the code does?
+
+Three "no" answers and you are done.
+
+## The escape hatches
+
+`allow-long-function: <reason>` and `allow-comment: <reason>` both need a written
+reason. A bare marker is reported.
+
+Reaching for a marker before you have tried the rename is a skipped step, not a
+judgement. "The rest of the file does it this way" is not a reason.
+
+## What this does not cover
+
+Scope. How much to change is a separate decision — see the `minimal-scope-plan`
+skill. Generated and vendored files are outside all three rules; change the
+generator, not the output.
