@@ -6,7 +6,8 @@ edited contains a function over CLAUDE_MAX_FUNCTION_LINES effective lines
 (default 12), it writes an explanation to stderr and exits 2, which feeds the
 message back to Claude and blocks the turn.
 
-Escape hatch: put `allow-long-function` in a comment inside the function.
+Escape hatch: put `allow-long-function: <reason>` in a comment inside the
+function. A bare marker does not count.
 Disable entirely: export CLAUDE_SKIP_FUNCTION_LENGTH=1
 """
 import ast
@@ -20,6 +21,7 @@ from generated import is_generated
 
 THRESHOLD = int(os.environ.get("CLAUDE_MAX_FUNCTION_LINES", "12"))
 ALLOW_MARKER = "allow-long-function"
+ALLOW_WITH_REASON = re.compile(re.escape(ALLOW_MARKER) + r"\s*:\s*\S")
 
 JS_SUFFIXES = (".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts")
 PY_SUFFIXES = (".py", ".pyi")
@@ -68,7 +70,7 @@ def drop_nested(violations):
 
 
 def allowed(lines, start, end):
-    return any(ALLOW_MARKER in line for line in lines[start - 1:end])
+    return any(ALLOW_WITH_REASON.search(line) for line in lines[start - 1:end])
 
 
 # --- Python -----------------------------------------------------------------
@@ -264,8 +266,9 @@ def report(path, violations):
         "first, then redistribute them. Do not extract helperA/helperB to get under",
         "the limit.",
         "",
-        "If the function is genuinely one responsibility, say why, and add a comment",
-        f"containing `{ALLOW_MARKER}` inside it.",
+        "This rule is required. Load the skill before you decide the function stays.",
+        "If it is genuinely one responsibility, put the reason on the marker:",
+        f"`{ALLOW_MARKER}: one state machine, splitting it hides the transitions`.",
     ]
     return "\n".join(head)
 

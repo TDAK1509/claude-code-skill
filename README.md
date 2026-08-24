@@ -66,7 +66,7 @@ Tuning:
 | --- | --- |
 | Change the limit | `CLAUDE_MAX_FUNCTION_LINES=20` |
 | Turn it off for one session | `CLAUDE_SKIP_FUNCTION_LENGTH=1` |
-| Allow one function | Put `allow-long-function` in a comment inside it |
+| Allow one function | Put `allow-long-function: <reason>` in a comment inside it |
 
 Skipped by default: test files, plus everything in *Generated files* below. Test
 callbacks (`describe`, `it`, `beforeEach`, …) are not treated as functions.
@@ -95,11 +95,26 @@ Tuning:
 | Change the docstring limit | `CLAUDE_MAX_DOCSTRING_SENTENCES=1` |
 | Also block `TODO` markers | `CLAUDE_COMMENTS_ALLOW_TODO=0` |
 | Turn it off for one session | `CLAUDE_SKIP_COMMENT_CHECK=1` |
-| Allow one comment | Append `allow-comment` to that comment |
+| Allow one comment | Append `allow-comment: <reason>` to that comment |
+| Change the bypass cap | `CLAUDE_MAX_COMMENT_BYPASS=5` |
 
 Comments inside string literals are ignored, so a URL does not trip it. The
 scanner is per line, so a `#` or `//` inside an unterminated multi-line string
 can still be misread.
+
+## The rules are required
+
+Both hooks block. Neither is advisory, and neither escape hatch is free.
+
+- A bare `allow-comment` or `allow-long-function` no longer silences a hook. The
+  marker needs a written reason after a colon.
+- More than 2 reasoned bypasses in one edit is itself reported. Raise the cap
+  with `CLAUDE_MAX_COMMENT_BYPASS`.
+- "It matches the file's existing style" is not a reason. That is how the file
+  got this way.
+
+The failure this guards against: reaching for the marker instead of loading the
+skill, then discovering later that half the comments could have been names.
 
 ## Generated files
 

@@ -5,7 +5,8 @@ Reads the Claude Code hook payload on stdin, looks only at the lines the edit
 added, and exits 2 when it finds an explanatory comment, a docstring longer
 than two sentences, or an identifier of more than ten words.
 
-Escape hatch: put `allow-comment` on the comment line.
+Escape hatch: put `allow-comment: <reason>` on the comment line. A bare marker
+does not count, and more than two bypasses in one edit are reported.
 Disable entirely: export CLAUDE_SKIP_COMMENT_CHECK=1
 """
 import difflib
@@ -22,6 +23,8 @@ MAX_NAME_WORDS = int(os.environ.get("CLAUDE_MAX_NAME_WORDS", "10"))
 MAX_DOCSTRING_SENTENCES = int(os.environ.get("CLAUDE_MAX_DOCSTRING_SENTENCES", "2"))
 ALLOW_TODO = os.environ.get("CLAUDE_COMMENTS_ALLOW_TODO", "1") != "0"
 ALLOW_MARKER = "allow-comment"
+ALLOW_WITH_REASON = re.compile(re.escape(ALLOW_MARKER) + r"\s*:\s*(\S.*?)\s*$")
+MAX_BYPASS = int(os.environ.get("CLAUDE_MAX_COMMENT_BYPASS", "2"))
 
 JS_SUFFIXES = (".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts")
 PY_SUFFIXES = (".py", ".pyi")
@@ -148,8 +151,12 @@ def trailing_comment(line):
     return line[match.start(1):]
 
 
+def is_bypassed(line):
+    return bool(ALLOW_WITH_REASON.search(line))
+
+
 def is_explanatory(line):
-    if ALLOW_MARKER in line:
+    if is_bypassed(line):
         return False
     if not LINE_COMMENT.match(line):
         trailing = trailing_comment(line)
@@ -228,11 +235,24 @@ def name_findings(lines, path):
     return found
 
 
+def bypass_findings(lines):
+    marked = [line.strip() for line in lines if ALLOW_MARKER in line]
+    bare = [line for line in marked if not is_bypassed(line)]
+    found = [{"kind": "unreasoned", "text": line[:90]} for line in bare]
+    if len(marked) - len(bare) > MAX_BYPASS:
+        found.append({"kind": "bypass", "count": len(marked) - len(bare)})
+    return found
+
+
 # --- reporting ---------------------------------------------------------------
 
 def describe(finding):
     if finding["kind"] == "comment":
         return f"  comment  {finding['text'][:90]}"
+    if finding["kind"] == "unreasoned":
+        return f"  escape hatch with no reason  {finding['text']}"
+    if finding["kind"] == "bypass":
+        return f"  {finding['count']} comments bypassed in one edit (limit {MAX_BYPASS})"
     if finding["kind"] == "docstring":
         return f"  docstring ({finding['sentences']} sentences)  {finding['text']}"
     return f"  name ({finding['words']} words)  {finding['text']}"
@@ -246,6 +266,14 @@ ADVICE = {
     ),
     "docstring": (
         f"Keep docstrings to {MAX_DOCSTRING_SENTENCES} sentences. Cut the rest.",
+    ),
+    "bypass": (
+        "Bypassing is not deciding. Load the `self-documenting-names` skill and",
+        "try three names first. Only then write the reason on the marker.",
+    ),
+    "unreasoned": (
+        f"A bare `{ALLOW_MARKER}` no longer silences this hook. Write the reason",
+        f"after it: `{ALLOW_MARKER}: explains a race the caller cannot see`.",
     ),
     "name": (
         f"Names stop at {MAX_NAME_WORDS} words. A name that needs more is a",
@@ -265,7 +293,8 @@ def report(path, findings):
         "Use the `self-documenting-names` skill.",
         "Only the lines this edit added are checked. Legacy code around them is",
         "not your task, unless the rename is a one-line change you can make now.",
-        f"If a comment truly cannot become a name, append `{ALLOW_MARKER}` to it.",
+        "This rule is required. Load the skill before you decide the comment stays.",
+        f"The escape hatch needs a reason: `{ALLOW_MARKER}: why a name cannot say this`.",
     ]
     return "\n".join(lines)
 
@@ -282,7 +311,8 @@ def main():
         return 0
     if not path.endswith(PY_SUFFIXES + JS_SUFFIXES):
         return 0
-    findings = comment_findings(lines) + docstring_findings(lines, path) + name_findings(lines, path)
+    findings = comment_findings(lines) + docstring_findings(lines, path)
+    findings += name_findings(lines, path) + bypass_findings(lines)
     if not findings:
         return 0
     sys.stderr.write(report(path, findings) + "\n")

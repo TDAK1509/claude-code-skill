@@ -16,6 +16,13 @@ function name with a verb.**
 A noun names a thing. Classes, variables, types, modules and files are things.
 Functions are not.
 
+## Not optional
+
+This rule is required. It is not a style preference.
+
+No hook enforces it, so nothing will stop you from skipping it. That makes it
+easier to drop under time pressure, not less binding.
+
 ## The test
 
 Read the name aloud with a subject in front of it: "it ____". If the sentence

@@ -8,6 +8,13 @@ description: Plan a task as the smallest change that reaches the goal, and decid
 Reach the goal with as little work as possible. Every file you open that the
 goal did not name is a cost: more review, more risk, more to revert.
 
+## Not optional
+
+This rule is required. It is not a style preference.
+
+No hook enforces it, so nothing will stop you from skipping it. That makes it
+easier to drop under time pressure, not less binding.
+
 ## Start from the goal
 
 Write the goal in one sentence before you plan. Then list the smallest set of

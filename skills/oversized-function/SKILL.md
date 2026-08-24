@@ -9,6 +9,17 @@ Functions over 12 lines tend to bundle multiple responsibilities.
 Functions over 12 lines almost always carry more than one responsibility, and that
 is the smell to chase — not the line count itself.
 
+## Not optional
+
+This rule is required. It is not a style preference and not a default you may
+weigh against convenience.
+
+When the hook blocks you, load this skill and do what it asks. Then decide.
+Reaching for `allow-long-function` before you have tried the rename is not a
+judgement call; it is a skipped step. The escape hatch needs a written reason,
+and "it matches the file's existing style" is not one. House style is how the
+file got this way.
+
 ## Analyse responsibilities first
 
 Ask what distinct concerns this function handles. Then ask:

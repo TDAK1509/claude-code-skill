@@ -9,6 +9,17 @@ Never comment on code. A comment that explains code is evidence that the code
 does not explain itself. Rename until the code says what the comment said, then
 delete the comment.
 
+## Not optional
+
+This rule is required. It is not a style preference and not a default you may
+weigh against convenience.
+
+When the hook blocks you, load this skill and do what it asks. Then decide.
+Reaching for `allow-comment` before you have tried the rename is not a
+judgement call; it is a skipped step. The escape hatch needs a written reason,
+and "it matches the file's existing style" is not one. House style is how the
+file got this way.
+
 ## The rule
 
 1. You want to write a comment. Stop.
@@ -53,6 +64,14 @@ These stay, because they do not explain what code does:
 Rarely, meaning cannot live in a name: a non-obvious external constraint, a
 workaround for a third-party bug, a link to a specification. Write it as *why*,
 never as *what*, and keep it to one line.
+
+**One line is the limit for a why-comment too.** A paragraph explaining a race
+condition or a design tradeoff is not a comment; it is a design note. It belongs
+in the pull request, the commit message, or a document you link to in one line.
+Code the reader must not break is guarded by a test, not by prose above it.
+
+"Every other function in this file has one" is not a reason. That is the file
+telling you how it got this way.
 
 ## New code only
 
