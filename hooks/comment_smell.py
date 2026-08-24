@@ -263,6 +263,8 @@ def report(path, findings):
     lines += [
         "",
         "Use the `self-documenting-names` skill.",
+        "Only the lines this edit added are checked. Legacy code around them is",
+        "not your task, unless the rename is a one-line change you can make now.",
         f"If a comment truly cannot become a name, append `{ALLOW_MARKER}` to it.",
     ]
     return "\n".join(lines)

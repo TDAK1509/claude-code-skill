@@ -77,7 +77,8 @@ Python is exact.
 ### comment_smell.py
 
 Reads only the lines the edit **added**, from the tool payload's patch, from the
-old/new strings, or for `Write` from the last committed version. It reports:
+old/new strings, or for `Write` from the last committed version. New code is
+bound by the rule; the legacy code around it is not. It reports:
 
 - An explanatory comment, on its own line or trailing code.
 - A docstring or JSDoc block over 2 sentences.

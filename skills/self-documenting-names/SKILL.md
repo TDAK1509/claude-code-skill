@@ -54,6 +54,20 @@ Rarely, meaning cannot live in a name: a non-obvious external constraint, a
 workaround for a third-party bug, a link to a specification. Write it as *why*,
 never as *what*, and keep it to one line.
 
+## New code only
+
+The rule binds the lines you write. It does not bind the file you write them in.
+
+Old comments and old names in the same file are not your task. Leave them. A
+rename that spreads across call sites is a separate task — say it exists, then
+move on. See the `minimal-scope-plan` skill.
+
+Two cases where you fix the legacy code now:
+
+- The rename is confined to the lines you already touched.
+- The old name is now wrong because of your change. A stale name is worse than
+  no name.
+
 ## Generated files are out of scope
 
 Do not apply this rule to generated code: `openapi.json`, generated API clients
