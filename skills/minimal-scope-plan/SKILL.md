@@ -1,6 +1,6 @@
 ---
 name: minimal-scope-plan
-description: Plan a task as the smallest change that reaches the goal, and decide when touching an out-of-scope file is justified. Use when planning or scoping work, when writing an implementation plan, when a fix seems to need edits across many files, when tempted to refactor or clean up code the task did not ask about, or when the user asks how large a change should be.
+description: Plan a task as the smallest change that reaches the goal, and decide when touching an out-of-scope file is justified. Use when planning or scoping work, when writing an implementation plan, when a fix seems to need edits across many files, when tempted to refactor or clean up code the task did not ask about, when reasoning about how existing code behaves without having read it, or when the user asks how large a change should be. Every claim in a plan must come from code you read, never from a comment, a docstring or a name.
 ---
 
 # Minimal scope plan
@@ -14,6 +14,34 @@ This rule is required. It is not a style preference.
 
 No hook enforces it, so nothing will stop you from skipping it. That makes it
 easier to drop under time pressure, not less binding.
+
+## Read the code first
+
+A plan is a claim about code that already exists. Every claim in it must come
+from a file you opened in this session. Nothing else counts.
+
+- Not what the function name suggests.
+- Not what the docstring says it returns.
+- Not what the comment above it says it guards against.
+- Not what a similar codebase did.
+- Not what you remember from earlier in this session, once the file has changed.
+
+**Read the body.** A comment is what someone believed on the day they wrote it.
+The code is what runs. When they disagree, the code wins, and the comment is a
+finding to report — see the `self-documenting-names` skill.
+
+The same holds for names. `validateOrder` may also charge the card. Open it.
+
+## Say what you have not read
+
+You will plan before you have read everything. That is normal. Mark it.
+
+Write "unread" next to any file you are reasoning about but did not open, and
+say what you assumed. An assumption you declared is a question. An assumption
+you buried is a bug.
+
+Never write a plan step for a function you have not seen. Read it, or make
+reading it step one.
 
 ## Start from the goal
 
@@ -61,6 +89,8 @@ Ask, for each step:
 - Does this step move the goal sentence forward? If not, delete it.
 - Does a smaller version of this step work? Prefer it.
 - What breaks if I skip this step? If nothing, skip it.
+- Which line did I read that makes this step necessary? If you cannot point at
+  one, the step rests on a guess.
 
 ## Applying this
 
@@ -69,3 +99,6 @@ Ask, for each step:
 - Prefer changing one function to changing one file. Prefer changing one file to
   changing one module.
 - A large diff needs a reason, not an apology.
+- Cite the file and line for every claim about how the code behaves today.
+- "I assume" is allowed in a plan. "It works like this" without a citation is
+  not.

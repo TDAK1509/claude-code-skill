@@ -36,7 +36,7 @@ Restart Claude Code after installing.
 | `clean-code-implementation` | The index for the three rules that bind code you write. Start here. |
 | `oversized-function` | Refactor long functions by responsibility, not by line count. |
 | `self-documenting-names` | Rename instead of commenting. Ten words per name, two sentences per docstring. |
-| `minimal-scope-plan` | Plan the smallest change that reaches the goal. Widen scope only for behaviour, security or performance. |
+| `minimal-scope-plan` | Plan from code you read, not comments. Smallest change that reaches the goal. |
 | `function-names-are-verbs` | Name every function with a verb. Nouns name things, not actions. |
 
 Only `oversized-function` and `self-documenting-names` have hooks. The rest are
