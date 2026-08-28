@@ -75,6 +75,19 @@ Touch an out-of-scope file only when one of these is true.
 Nothing else qualifies. Not style, not naming in untouched code, not a refactor
 you would enjoy, not an unrelated bug.
 
+## A file you open is different from a file you widen into
+
+The scope rules above are about which **files** you touch. Inside a file you are
+already editing, one kind of cleanup is always in scope: **pure movement.**
+
+Reordering functions so each helper sits below its caller changes no behaviour,
+so it carries none of the risk the three reasons guard against. Do it — see the
+`helper-functions-ordering` skill. Commit the move separately from the change,
+or the diff becomes unreadable.
+
+Everything else stays out. A rename that reaches other files, a signature
+change, a logic tidy — those are new tasks, not opportunities.
+
 ## When you find something else
 
 You will find unrelated problems. Report them; do not fix them.

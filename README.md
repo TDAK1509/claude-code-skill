@@ -125,6 +125,10 @@ Tuning:
 Not reported: mutual recursion, a name used at module level (moving it would
 break the language's own order rule), and anonymous functions.
 
+Unlike `comment_smell.py`, this one reads the whole file. That is deliberate:
+reordering is pure movement, so a file you open is a file you may order. Commit
+the move separately from the change that made you open it.
+
 ## The rules are required
 
 All three hooks block. None is advisory, and no escape hatch is free.

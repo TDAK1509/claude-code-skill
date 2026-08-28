@@ -93,9 +93,28 @@ If the module runs the call at import time — a top-level `app = build_app()` �
 the definition must come first. That is the language rule again, not a
 preference.
 
+## A file you touch is a file you order
+
+The hook reads the whole file, not the lines you added. That is deliberate.
+
+When it fires on code you did not write, reorder it. You already have the file
+open, you already understand the call graph, and the move costs nothing at
+runtime. Take the opportunity.
+
+Reordering is **pure movement**. Cut a function, paste it below its caller,
+change nothing inside it. No renames, no signature edits, no logic. If you find
+something else wrong on the way, report it — see `minimal-scope-plan`.
+
+**Commit the move on its own.** A reorder and a behaviour change in one diff are
+unreviewable: every line looks changed, and the one line that matters hides in
+the noise. Move first, commit, then make your change.
+
+Defer only when the move would collide with work in flight — an open pull
+request on the same file, or a rename already under way. Then say so and leave
+it.
+
 ## The escape hatch
 
 `allow-helper-order: <reason>` inside the helper. The reason that counts names
-the language constraint. "It was already there" is not one — but see
-`minimal-scope-plan`: reordering a file you did not otherwise touch is a
-separate task.
+the language constraint. "It was already there" is not a reason; that file is
+now yours to order.

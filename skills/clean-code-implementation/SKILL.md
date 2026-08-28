@@ -69,6 +69,14 @@ reported.
 Reaching for a marker before you have tried the rename is a skipped step, not a
 judgement. "The rest of the file does it this way" is not a reason.
 
+## Legacy code you touch
+
+The three name-and-length rules bind the lines you write. Old lines around them
+stay — a rename spreads across call sites, and that is a new task.
+
+Ordering is the exception. It is pure movement, so when you open a file, put its
+helpers under their callers. Commit that move on its own.
+
 ## What this does not cover
 
 Scope. How much to change is a separate decision — see the `minimal-scope-plan`
