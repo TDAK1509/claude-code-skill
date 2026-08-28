@@ -1,6 +1,6 @@
 ---
 name: clean-code-implementation
-description: The rules that bind every line of code you write in this codebase - verb function names, functions under the line limit, and names instead of comments. Use whenever you write, edit or review code, before you start an implementation, when a hook blocks an edit, or when you are about to open a pull request.
+description: The rules that bind every line of code you write in this codebase - verb function names, functions under the line limit, names instead of comments, and helpers defined below their caller. Use whenever you write, edit or review code, before you start an implementation, when a hook blocks an edit, or when you are about to open a pull request.
 ---
 
 # Clean code implementation
@@ -51,7 +51,7 @@ about to write a comment above.
 
 ## Before you finish
 
-Read your diff and ask three questions.
+Read your diff and ask four questions.
 
 - Does every new function name start with a verb that is true?
 - Is any new function over the limit without a written reason?
@@ -80,5 +80,5 @@ helpers under their callers. Commit that move on its own.
 ## What this does not cover
 
 Scope. How much to change is a separate decision — see the `minimal-scope-plan`
-skill. Generated and vendored files are outside all three rules; change the
+skill. Generated and vendored files are outside all four rules; change the
 generator, not the output.
