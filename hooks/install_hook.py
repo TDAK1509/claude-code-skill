@@ -18,6 +18,7 @@ MATCHER = "Edit|Write|MultiEdit"
 REGISTRY = {
     "oversized-function": "oversized_function.py",
     "self-documenting-names": "comment_smell.py",
+    "helper-functions-ordering": "helper_order.py",
 }
 
 

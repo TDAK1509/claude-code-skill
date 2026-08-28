@@ -5,13 +5,14 @@ description: The rules that bind every line of code you write in this codebase -
 
 # Clean code implementation
 
-Three rules bind every line you write. They are one habit, not three checklists.
+Four rules bind every line you write. They are one habit, not four checklists.
 
 | Rule | Skill | Enforced by |
 | --- | --- | --- |
 | A function name is a verb | `function-names-are-verbs` | nothing — you |
 | A function is short | `oversized-function` | `oversized_function.py` |
 | A name replaces a comment | `self-documenting-names` | `comment_smell.py` |
+| A helper sits below its caller | `helper-functions-ordering` | `helper_order.py` |
 
 Load the skill itself when a rule bites. This page is the index, not the
 content.
@@ -20,8 +21,8 @@ content.
 
 These are required rules. They are not style preferences.
 
-Two of them block your turn. The third does not, which makes it the one you will
-drop first. It is not weaker.
+Three of them block your turn. The verb rule does not, which makes it the one
+you will drop first. It is not weaker.
 
 ## They are the same rule
 
@@ -30,6 +31,7 @@ Each one pushes meaning into a name.
 - The verb says what the function does.
 - The line limit says it does only that.
 - The absent comment says the name was enough.
+- The position says which function it serves.
 
 A failure in one shows up as a failure in the others. A function you cannot name
 with one verb is a function doing two things, and it is the function you were
@@ -44,6 +46,8 @@ about to write a comment above.
    to name the responsibilities, not a signal to extract `helperA`.
 3. **Delete the comments.** Every comment you wanted is a name you did not pick.
    Move the meaning, then remove the comment.
+4. **Place it under its caller.** A new helper goes directly below the line that
+   calls it, never at the top or the bottom of the file.
 
 ## Before you finish
 
@@ -52,13 +56,15 @@ Read your diff and ask three questions.
 - Does every new function name start with a verb that is true?
 - Is any new function over the limit without a written reason?
 - Does any new comment say what the code does?
+- Is any new helper defined above the function that calls it?
 
-Three "no" answers and you are done.
+Four "no" answers and you are done.
 
 ## The escape hatches
 
-`allow-long-function: <reason>` and `allow-comment: <reason>` both need a written
-reason. A bare marker is reported.
+`allow-long-function: <reason>`, `allow-comment: <reason>` and
+`allow-helper-order: <reason>` all need a written reason. A bare marker is
+reported.
 
 Reaching for a marker before you have tried the rename is a skipped step, not a
 judgement. "The rest of the file does it this way" is not a reason.

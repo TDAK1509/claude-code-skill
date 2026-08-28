@@ -9,6 +9,7 @@ them up quickly.
 skills/<skill-name>/SKILL.md   # one directory per skill
 hooks/oversized_function.py    # PostToolUse detector for long functions
 hooks/comment_smell.py         # PostToolUse detector for comments and long names
+hooks/helper_order.py          # PostToolUse detector for helpers above their caller
 hooks/generated.py             # shared: is this file generated or vendored?
 hooks/install_hook.py          # registers the hooks in a settings.json
 install.sh                     # link or copy skills, and register hooks
@@ -34,22 +35,24 @@ Restart Claude Code after installing.
 | Skill | Purpose |
 | --- | --- |
 | `clean-code-implementation` | The index for the three rules that bind code you write. Start here. |
+| `helper-functions-ordering` | Define a helper directly below its caller. Read a file from the whole to the parts. |
 | `oversized-function` | Refactor long functions by responsibility, not by line count. |
 | `self-documenting-names` | Rename instead of commenting. Ten words per name, two sentences per docstring. |
 | `minimal-scope-plan` | Plan from code you read, not comments. Smallest change that reaches the goal. |
 | `function-names-are-verbs` | Name every function with a verb. Nouns name things, not actions. |
 
-Only `oversized-function` and `self-documenting-names` have hooks. The rest are
-judgement calls, so no deterministic check exists for them.
+`oversized-function`, `self-documenting-names` and `helper-functions-ordering`
+have hooks. The rest are judgement calls, so no deterministic check exists for
+them.
 
 ## Hooks
 
 A skill is advice Claude may or may not load. A hook makes the check
-deterministic. Both hooks register as separate `PostToolUse` entries on
+deterministic. Each hook registers as its own `PostToolUse` entry on
 `Edit|Write|MultiEdit`, so Claude Code runs them in parallel. Either one exits 2
 on a hit, which blocks the turn and feeds the finding back to Claude.
 
-Install both with `./install.sh --hooks`. Install one with
+Install them all with `./install.sh --hooks`. Install one with
 `python3 hooks/install_hook.py --only oversized-function`.
 
 ### oversized_function.py
@@ -103,12 +106,31 @@ Comments inside string literals are ignored, so a URL does not trip it. The
 scanner is per line, so a `#` or `//` inside an unterminated multi-line string
 can still be misread.
 
+### helper_order.py
+
+- Event: `PostToolUse` on `Edit|Write|MultiEdit`.
+- It finds a function that every one of its callers is defined below. The file
+  then reads bottom-up: detail before purpose.
+- Siblings only, at the top level of a file and inside a Python class. Python
+  uses `ast`; JS/TS reuses the brace scanner from `oversized_function.py`.
+- On a hit it routes Claude into the `helper-functions-ordering` skill.
+
+Tuning:
+
+| What | How |
+| --- | --- |
+| Turn it off for one session | `CLAUDE_SKIP_HELPER_ORDER=1` |
+| Allow one helper | Put `allow-helper-order: <reason>` inside it |
+
+Not reported: mutual recursion, a name used at module level (moving it would
+break the language's own order rule), and anonymous functions.
+
 ## The rules are required
 
-Both hooks block. Neither is advisory, and neither escape hatch is free.
+All three hooks block. None is advisory, and no escape hatch is free.
 
-- A bare `allow-comment` or `allow-long-function` no longer silences a hook. The
-  marker needs a written reason after a colon.
+- A bare `allow-comment`, `allow-long-function` or `allow-helper-order` does not
+  silence a hook. The marker needs a written reason after a colon.
 - More than 2 reasoned bypasses in one edit is itself reported. Raise the cap
   with `CLAUDE_MAX_COMMENT_BYPASS`.
 - "It matches the file's existing style" is not a reason. That is how the file
@@ -119,7 +141,7 @@ skill, then discovering later that half the comments could have been names.
 
 ## Generated files
 
-Both hooks ignore generated and vendored code, through `hooks/generated.py`. The
+The hooks ignore generated and vendored code, through `hooks/generated.py`. The
 rules are for code a person writes; generator output is regenerated, not
 refactored.
 
