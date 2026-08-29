@@ -1,6 +1,6 @@
 ---
 name: self-documenting-names
-description: Write code that explains itself through names instead of comments. Use when adding or reviewing comments, when a comment explains what code does, when naming variables, functions, classes or files, when a hook reports a comment or an over-long name, or when the user asks to clean up comments or improve naming.
+description: Write code that explains itself through names instead of comments. Use when adding or reviewing comments, when a comment explains what code does, when naming variables, functions, classes or files, when writing or trimming a docstring, when a hook reports a comment or an over-long name, or when the user asks to clean up comments or improve naming.
 ---
 
 # Self-documenting names
@@ -50,6 +50,10 @@ sentences.** No parameter tables, no restating the signature, no usage essays.
 
 When you add to a docstring that is already long, add one or two sentences at
 most. Do not extend the existing style.
+
+A docstring that restates the signature is worse than no docstring: it is length
+without information. Write the one rule the reader cannot see in the code. See
+`references/examples.md` for a worked before and after.
 
 ## What is not a comment on code
 
@@ -101,3 +105,4 @@ then regenerate. The hooks skip these paths for the same reason.
 - Before writing any comment, try three names first.
 - When you delete a comment, say which name absorbed it.
 - Never leave commented-out code. Delete it; the history keeps it.
+- Read `references/examples.md` when a name or a docstring is hard to cut.
