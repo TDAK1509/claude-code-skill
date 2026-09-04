@@ -40,6 +40,9 @@ Restart Claude Code after installing.
 | `self-documenting-names` | Rename instead of commenting. Ten words per name, two sentences per docstring. |
 | `minimal-scope-plan` | Plan from code you read, not comments. Smallest change that reaches the goal. |
 | `function-names-are-verbs` | Name every function with a verb. Nouns name things, not actions. |
+| `code-review-do-what-it-claims` | Review changed files (current branch vs main) against the claim they make. |
+| `code-review-leaks` | Review changed files (current branch vs main) for security and performance leaks. |
+| `code-review-full` | Runs the two skills above and combines their reports. |
 
 `oversized-function`, `self-documenting-names` and `helper-functions-ordering`
 have hooks. The rest are judgement calls, so no deterministic check exists for
