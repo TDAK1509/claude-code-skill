@@ -32,9 +32,9 @@ sized as small, single-responsibility, working, testable, revertible PRs.
 
 After you draft a plan, get it reviewed by Codex before finalizing:
 
-1. Use the codex:run skill to send the draft plan to Codex, model `gpt-5.6`,
-   reasoning effort `high`. If `gpt-5.6` is unavailable, fall back to model
-   `gpt-5.4`, reasoning effort `high`. Sandbox `read-only`.
+1. Use the codex:run skill to send the draft plan to Codex, model
+   `gpt-5.6-sol`, reasoning effort `high`. Sandbox `read-only`. No fallback
+   model — if the call fails, report the failure and stop the loop.
 2. Ask Codex to review the plan against the increments-plan skill's rules
    (smallest scope, PR sizing, working/testable/revertible steps) and against
    the ticket's acceptance criteria, and to flag gaps, risks, or oversized
