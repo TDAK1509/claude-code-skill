@@ -1,11 +1,11 @@
 ---
 name: clean-code-implementation
-description: The rules that bind every line of code you write in this codebase - verb function names, functions under the line limit, names instead of comments, and helpers defined below their caller. Use whenever you write, edit or review code, before you start an implementation, when a hook blocks an edit, or when you are about to open a pull request.
+description: The rules that bind every line of code you write in this codebase - verb function names, functions under the line limit, names instead of comments, helpers defined below their caller, and the wider maintainability habits. Use whenever you write, edit or review code, before you start an implementation, when a hook blocks an edit, or when you are about to open a pull request.
 ---
 
 # Clean code implementation
 
-Four rules bind every line you write. They are one habit, not four checklists.
+Five rules bind every line you write. They are one habit, not five checklists.
 
 | Rule | Skill | Enforced by |
 | --- | --- | --- |
@@ -13,6 +13,7 @@ Four rules bind every line you write. They are one habit, not four checklists.
 | A function is short | `oversized-function` | `oversized_function.py` |
 | A name replaces a comment | `self-documenting-names` | `comment_smell.py` |
 | A helper sits below its caller | `helper-functions-ordering` | `helper_order.py` |
+| The code stays maintainable | `maintainable-coding-principles` | nothing — you |
 
 Load the skill itself when a rule bites. This page is the index, not the
 content.
@@ -21,8 +22,8 @@ content.
 
 These are required rules. They are not style preferences.
 
-Three of them block your turn. The verb rule does not, which makes it the one
-you will drop first. It is not weaker.
+Three of them block your turn. The verb rule and the maintainability rule do
+not, which makes them the ones you will drop first. They are not weaker.
 
 ## They are the same rule
 
@@ -48,17 +49,22 @@ about to write a comment above.
    Move the meaning, then remove the comment.
 4. **Place it under its caller.** A new helper goes directly below the line that
    calls it, never at the top or the bottom of the file.
+5. **Check the wider habits.** Guard clauses, meaningful names, contained
+   dependencies, unrepresentable invalid states, decisions separate from side
+   effects, useful errors, focused changes — see `maintainable-coding-principles`.
 
 ## Before you finish
 
-Read your diff and ask four questions.
+Read your diff and ask five questions.
 
 - Does every new function name start with a verb that is true?
 - Is any new function over the limit without a written reason?
 - Does any new comment say what the code does?
 - Is any new helper defined above the function that calls it?
+- Does this design make the code easier for the next engineer to understand,
+  safely change, test, and trust?
 
-Four "no" answers and you are done.
+Five "no" answers and you are done.
 
 ## The escape hatches
 
@@ -80,5 +86,5 @@ helpers under their callers. Commit that move on its own.
 ## What this does not cover
 
 Scope. How much to change is a separate decision — see the `minimal-scope-plan`
-skill. Generated and vendored files are outside all four rules; change the
+skill. Generated and vendored files are outside all five rules; change the
 generator, not the output.

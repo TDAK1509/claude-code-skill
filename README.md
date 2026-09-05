@@ -42,6 +42,7 @@ Restart Claude Code after installing.
 | `minimal-scope-plan` | Plan from code you read, not comments. Smallest change that reaches the goal. |
 | `increments-plan` | Plan a task as small, single-responsibility PRs — each one working, testable, revertible. |
 | `function-names-are-verbs` | Name every function with a verb. Nouns name things, not actions. |
+| `maintainable-coding-principles` | Seven habits for maintainable code: visible main paths, meaningful names, contained dependencies, unrepresentable invalid states, decisions apart from side effects, useful errors, focused changes. |
 | `code-review-do-what-it-claims` | Review changed files (current branch vs main) against the claim they make. |
 | `code-review-leaks` | Review changed files (current branch vs main) for security and performance leaks. |
 | `code-review-full` | Runs the two skills above and combines their reports. |
