@@ -39,6 +39,7 @@ Restart Claude Code after installing.
 | `oversized-function` | Refactor long functions by responsibility, not by line count. |
 | `self-documenting-names` | Rename instead of commenting. Ten words per name, two sentences per docstring. |
 | `minimal-scope-plan` | Plan from code you read, not comments. Smallest change that reaches the goal. |
+| `increments-plan` | Plan a task as small, single-responsibility PRs — each one working, testable, revertible. |
 | `function-names-are-verbs` | Name every function with a verb. Nouns name things, not actions. |
 | `code-review-do-what-it-claims` | Review changed files (current branch vs main) against the claim they make. |
 | `code-review-leaks` | Review changed files (current branch vs main) for security and performance leaks. |
