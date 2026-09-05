@@ -135,10 +135,12 @@ Do not claim something is tested unless you actually ran the relevant test or va
 
 Before finishing:
 
-- Run relevant tests.
+- Run tests scoped to the files you changed and their direct dependents —
+  not the full test suite.
 - Run relevant type checks.
 - Run relevant linting or formatting checks.
-- Run build validation when appropriate.
+- Do not run a full build. CI runs the build and the full test suite when
+  the PR is opened; do not duplicate that here.
 - Fix failures caused by your changes.
 - Inspect the final diff.
 
@@ -163,6 +165,9 @@ finishing:
    - Never change the approved plan to satisfy a reviewer finding.
 4. Finalize the implementation once you have triaged every finding from
    that one round.
+5. Once finalized, open a pull request for this increment. CI runs the
+   build and full test suite on the PR — do not wait for or reproduce that
+   locally first.
 
 ## Revertibility
 
@@ -198,7 +203,7 @@ When the increment is complete, report only:
 
 ### Implemented
 
-Briefly state what behavior now works.
+Briefly state what behavior now works, and link the PR you opened.
 
 ### Validation
 
