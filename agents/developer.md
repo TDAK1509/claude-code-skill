@@ -2,6 +2,7 @@
 name: developer
 description: Implements an approved engineering increment exactly as planned, using the clean-code-implementation skill and validating the result before completion.
 model: sonnet
+effort: medium
 skills:
   - clean-code-implementation
 ---
