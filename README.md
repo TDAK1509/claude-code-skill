@@ -38,6 +38,7 @@ Restart Claude Code after installing.
 | `helper-functions-ordering` | Define a helper directly below its caller. Read a file from the whole to the parts. |
 | `oversized-function` | Refactor long functions by responsibility, not by line count. |
 | `self-documenting-names` | Rename instead of commenting. Ten words per name, two sentences per docstring. |
+| `planning` | The index for the two rules that bind a plan. Start here. |
 | `minimal-scope-plan` | Plan from code you read, not comments. Smallest change that reaches the goal. |
 | `increments-plan` | Plan a task as small, single-responsibility PRs — each one working, testable, revertible. |
 | `function-names-are-verbs` | Name every function with a verb. Nouns name things, not actions. |
