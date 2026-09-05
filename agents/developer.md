@@ -165,9 +165,6 @@ finishing:
    - Never change the approved plan to satisfy a reviewer finding.
 4. Finalize the implementation once you have triaged every finding from
    that one round.
-5. Once finalized, open a pull request for this increment. CI runs the
-   build and full test suite on the PR — do not wait for or reproduce that
-   locally first.
 
 ## Revertibility
 
@@ -203,7 +200,7 @@ When the increment is complete, report only:
 
 ### Implemented
 
-Briefly state what behavior now works, and link the PR you opened.
+Briefly state what behavior now works.
 
 ### Validation
 
