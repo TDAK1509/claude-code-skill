@@ -85,6 +85,6 @@ helpers under their callers. Commit that move on its own.
 
 ## What this does not cover
 
-Scope. How much to change is a separate decision — see the `minimal-scope-plan`
+Scope. How much to change is a separate decision — see the `increments-plan`
 skill. Generated and vendored files are outside all five rules; change the
 generator, not the output.
