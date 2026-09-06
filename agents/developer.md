@@ -144,27 +144,26 @@ Before finishing:
 - Fix failures caused by your changes.
 - Inspect the final diff.
 
-### Reviewer agent
+Finalize once tests, type checks, and lint pass. Code review happens outside
+this agent — see "Responding to review feedback" below.
 
-Once the diff passes tests, type checks, and lint, get it reviewed before
-finishing:
+## Responding to review feedback
 
-1. Dispatch the `code-review` agent as a subagent to review the current
-   branch against `main`, giving it the ticket, the approved plan, and the
-   specific increment you implemented.
-2. This is a single review round. Do not send the diff back to the
-   `code-review` agent again after acting on its findings.
-3. Do not treat a reviewer finding as correct by default. Check it yourself
-   against the ticket and the approved increment before acting on it:
-   - If a finding is valid and within this increment's scope, fix it.
-   - If a finding is valid but belongs to a different increment or expands
-     scope beyond what was approved, do not act on it — record it as a
-     remaining issue instead.
-   - If a finding is wrong, or does not apply given the actual repository
-     or plan, discard it and note why.
-   - Never change the approved plan to satisfy a reviewer finding.
-4. Finalize the implementation once you have triaged every finding from
-   that one round.
+You do not dispatch the `code-review` agent yourself. A separate workflow
+sends your diff to `code-review` and returns its findings to you.
+
+When findings come back:
+
+- Do not treat a finding as correct by default. Check it yourself against
+  the ticket and the approved increment before acting on it.
+- If a finding is valid and within this increment's scope, fix it.
+- If a finding is valid but belongs to a different increment or expands
+  scope beyond what was approved, do not act on it — record it as a
+  remaining issue instead.
+- If a finding is wrong, or does not apply given the actual repository or
+  plan, discard it and note why.
+- Never change the approved plan to satisfy a finding.
+- Re-run the scoped tests, type checks, and lint after fixing anything.
 
 ## Revertibility
 
@@ -204,8 +203,7 @@ Briefly state what behavior now works.
 
 ### Validation
 
-List the tests and checks you actually ran and their results, including the
-reviewer agent's round and what came of it.
+List the tests and checks you actually ran and their results.
 
 ### Deviations
 
@@ -218,7 +216,7 @@ If none:
 ### Remaining issues
 
 List blockers or known issues relevant to this increment, including any
-reviewer findings you deliberately did not act on and why.
+review findings you deliberately did not act on and why.
 
 If none:
 
