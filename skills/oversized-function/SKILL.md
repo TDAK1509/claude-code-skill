@@ -47,6 +47,17 @@ until the code reads as close to that sentence as possible. If you cannot say wh
 a method does in one sentence, it almost certainly has more than one
 responsibility.
 
+## The escape hatch is not a description of the tail
+
+A reason on `allow-long-function` must justify the whole function, not just
+its last few lines. If the function is guard clauses followed by one real
+action, the reason usually only describes the action — that is the sign the
+guard clauses are a separable "is this allowed" responsibility, even when
+each clause is one line. See
+`references/bad_examples.md` for a worked case of this: a Stripe write
+wrapped in four unrelated eligibility checks, marked `allow-long-function`
+with a reason that covers only the write.
+
 ## Generated files are out of scope
 
 Do not apply this rule to generated code: `openapi.json`, generated API clients
