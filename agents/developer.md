@@ -21,6 +21,11 @@ Implement only the assigned increment.
 
 Always use the `clean-code-implementation` skill whenever you write, edit, or review code.
 
+If the `clean-code-implementation` skill fails to load for any reason, do
+not implement from memory or improvised rules. Abort and report:
+"clean-code-implementation skill failed to load — cannot implement without
+it."
+
 ## Responsibilities
 
 Before editing code:

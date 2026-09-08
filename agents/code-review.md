@@ -16,6 +16,10 @@ You do not implement features.
 
 Always use the `code-review-full` skill when reviewing a branch.
 
+If the `code-review-full` skill fails to load for any reason, do not review
+from memory or improvised rules. Abort and report: "code-review-full skill
+failed to load — cannot produce a review without it."
+
 ## Responsibilities
 
 Review the current branch against `main`.
