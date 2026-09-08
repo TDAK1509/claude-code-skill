@@ -17,6 +17,8 @@ SRC_DIR="$REPO_DIR/skills"
 DEST_DIR="$HOME/.claude/skills"
 AGENTS_SRC_DIR="$REPO_DIR/agents"
 AGENTS_DEST_DIR="$HOME/.claude/agents"
+WORKFLOWS_SRC_DIR="$REPO_DIR/workflows"
+WORKFLOWS_DEST_DIR="$HOME/.claude/workflows"
 MODE="link"
 HOOKS="no"
 HOOK_ACTION=""
@@ -78,6 +80,21 @@ for src in "$AGENTS_SRC_DIR"/*.md; do
   else
     ln -s "$src" "$dest"
     echo "linked  agent $(basename "$src") -> $dest"
+  fi
+done
+
+mkdir -p "$WORKFLOWS_DEST_DIR"
+
+for src in "$WORKFLOWS_SRC_DIR"/*.js; do
+  [[ -f "$src" ]] || continue
+  dest="$WORKFLOWS_DEST_DIR/$(basename "$src")"
+  rm -f "$dest"
+  if [[ "$MODE" == "copy" ]]; then
+    cp "$src" "$dest"
+    echo "copied  workflow $(basename "$src") -> $dest"
+  else
+    ln -s "$src" "$dest"
+    echo "linked  workflow $(basename "$src") -> $dest"
   fi
 done
 
