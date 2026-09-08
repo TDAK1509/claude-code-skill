@@ -77,14 +77,23 @@ For each PR, state:
    If no such evidence exists because nothing like it is in the repo yet, say
    so instead of inventing a source.
 
-Do not write implementation detail beyond what the outcome requires. If a step
-needs a design decision you have not made, say "decide: X" instead of guessing
-an answer.
+Do not write implementation detail beyond what the outcome requires.
+
+## Unclear points go to the terminal, not the plan
+
+The plan holds only decided points. If a step needs a decision or approval
+you do not have — a design choice, a scope call, an ambiguous requirement —
+stop and ask in the terminal before writing that step. Do not write
+"decide: X", a question, or an open item into the plan itself.
+
+Once the answer comes back, write the step as decided. If the ticket is too
+ambiguous to plan safely even after asking, say so in the terminal instead of
+producing a plan full of placeholders.
 
 A step's outcome and approach must trace back to something you actually read
-in the repository or the ticket, not to an assumption about how the codebase
-probably works. Evidence is what separates "the outcome I chose" from "the
-outcome I guessed."
+in the repository or the ticket, or to an answer you were given, not to an
+assumption about how the codebase probably works. Evidence is what separates
+"the outcome I chose" from "the outcome I guessed."
 
 ## Before you finish
 
@@ -95,5 +104,8 @@ outcome I guessed."
 - Is any step describable only with "and"? Split it.
 - Does every step name the evidence its approach came from, or say plainly
   that none exists?
+- Does the plan contain any unresolved "decide: X" or open question? If so,
+  ask in the terminal and resolve it before the plan is done.
 
-Four "yes" and one "no unsplit step" and the plan is ready.
+Four "yes" and one "no unsplit step" and one "no unresolved question" and the
+plan is ready.
