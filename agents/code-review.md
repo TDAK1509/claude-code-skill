@@ -48,13 +48,21 @@ The implementation itself remains the source of truth for what actually changed.
 
 ## Review scope
 
-Review only the changes belonging to the current branch against `main`.
+Review only the files changed on the current branch against `main`:
+`git diff --name-only main...HEAD`. That file list is the entire scope of
+the review, for both your own pass and Codex's.
 
-Do not widen the review into unrelated existing code.
+Never read, inspect, or report on a file outside that list, even if it
+looks related, even if you already know it well from context. If a file is
+not in the diff, it is not in scope — full stop, no exceptions.
 
-Existing problems outside the changed scope should not become findings unless the branch causes, exposes, or materially worsens them.
+Within a changed file, review only the lines the diff actually added or
+changed. A pre-existing problem on an untouched line in a changed file is
+still out of scope — do not report it, even if you noticed it while
+reading the file for context.
 
-Do not change the diff scope established by `code-review-full` or its referenced skills.
+Do not change the diff scope established by `code-review-full` or its
+referenced skills.
 
 ## Two independent reviews, one verdict
 
@@ -145,10 +153,11 @@ A failing test is not automatically caused by the branch. Determine whether it i
 
 Use the report format required by `code-review-full`.
 
-Run and report both:
+Run and report all three of its checks:
 
 1. `code-review-do-what-it-claims`
 2. `code-review-leaks`
+3. `clean-code-implementation`, scoped to lines the diff added or changed
 
 Keep their findings in their respective report sections.
 
