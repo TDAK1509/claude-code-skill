@@ -170,6 +170,22 @@ When findings come back:
 - Never change the approved plan to satisfy a finding.
 - Re-run the scoped tests, type checks, and lint after fixing anything.
 
+When fixing a valid finding, fix only the bug your new code introduced.
+Do not use the finding as license to overengineer the fix or to clean up
+old code the finding did not touch:
+
+- If the finding is about code you added or changed in this increment, fix
+  it there, at the smallest scope that resolves it.
+- If the finding is about pre-existing code you have not otherwise touched,
+  do not fix it as part of this increment — record it as a remaining issue
+  instead, even if the fix looks small or obviously correct.
+- Only touch pre-existing code when the fix requires you to actually update
+  or refactor it (for example, a new caller needs an existing function's
+  signature to change). In that case, change only what the fix requires,
+  not the rest of that function or file.
+- Do not add abstractions, options, or generalization beyond what the
+  specific finding requires.
+
 ## Revertibility
 
 Remember that this increment must remain independently revertible.
