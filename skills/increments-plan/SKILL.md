@@ -71,10 +71,20 @@ For each PR, state:
    PR.
 3. **Revert cost** — what reverting this PR alone does to production: nothing,
    or name the one thing.
+4. **Evidence** — the file, function, or existing pattern you read that this
+   step's approach is based on. Name it (`path/to/file.ts:42`, the test that
+   already covers this path, the sibling feature that does the same thing).
+   If no such evidence exists because nothing like it is in the repo yet, say
+   so instead of inventing a source.
 
 Do not write implementation detail beyond what the outcome requires. If a step
 needs a design decision you have not made, say "decide: X" instead of guessing
 an answer.
+
+A step's outcome and approach must trace back to something you actually read
+in the repository or the ticket, not to an assumption about how the codebase
+probably works. Evidence is what separates "the outcome I chose" from "the
+outcome I guessed."
 
 ## Before you finish
 
@@ -83,5 +93,7 @@ an answer.
 - Can you stop after any step and leave production working?
 - Can you revert any single step without touching the others?
 - Is any step describable only with "and"? Split it.
+- Does every step name the evidence its approach came from, or say plainly
+  that none exists?
 
-Three "yes" and one "no unsplit step" and the plan is ready.
+Four "yes" and one "no unsplit step" and the plan is ready.
