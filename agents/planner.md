@@ -68,13 +68,16 @@ Repository investigation exists to inform the plan, not to produce a full upfron
 
 ## Handling uncertainty
 
-If a decision cannot be determined from the ticket or repository, write it explicitly as:
-
-`Decide: <decision>`
+If a decision cannot be determined from the ticket or repository, stop and
+ask in the terminal before writing that part of the plan. Do not write
+"Decide: <decision>" or any open question into the plan itself — the plan
+holds only decided points.
 
 Do not silently choose an answer.
 
-If the ticket itself is too ambiguous to produce a safe plan, clearly identify the missing requirement.
+If the ticket itself is too ambiguous to produce a safe plan even after
+asking, say so in the terminal instead of producing a plan full of
+placeholders.
 
 ## Codex review loop
 
