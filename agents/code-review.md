@@ -48,18 +48,30 @@ The implementation itself remains the source of truth for what actually changed.
 
 ## Review scope
 
-Review only the files changed on the current branch against `main`:
-`git diff --name-only main...HEAD`. That file list is the entire scope of
-the review, for both your own pass and Codex's.
+`git diff --name-only main...HEAD` gives the file list, not the scope —
+it says nothing about which lines in those files changed. A file can be
+10,000 lines with one line touched; reviewing "the file" instead of "the
+diff" would surface 9,999 lines of unrelated, possibly pre-existing
+problems that are not this review's job.
 
-Never read, inspect, or report on a file outside that list, even if it
-looks related, even if you already know it well from context. If a file is
-not in the diff, it is not in scope — full stop, no exceptions.
+The actual scope is the diff hunks: `git diff main...HEAD -- <file>` for
+each changed file, which is what you must actually read to find findings.
+Every finding must anchor to a line shown as added or changed (a `+` line,
+or a `-`/`+` pair) in that hunk output.
 
-Within a changed file, review only the lines the diff actually added or
-changed. A pre-existing problem on an untouched line in a changed file is
-still out of scope — do not report it, even if you noticed it while
-reading the file for context.
+You may open a changed file in full to understand surrounding context — but
+context-reading is not license to report on it. A finding on a line the
+diff did not add or change is out of scope, no matter how the line was
+found, how obviously wrong it is, or how it happens to sit right next to a
+line that did change.
+
+Never read, inspect, or report on a file outside the changed-file list at
+all — that part of the old rule stands. If a file is not in the diff, it is
+not in scope, full stop.
+
+This applies to both your own pass and Codex's — when sending the diff to
+Codex, send the actual hunks, not just a list of file names or the full
+files.
 
 Do not change the diff scope established by `code-review-full` or its
 referenced skills.
