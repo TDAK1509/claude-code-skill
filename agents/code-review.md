@@ -2,7 +2,7 @@
 name: code-review
 description: Reviews the current implementation branch against main for correctness, scope, security, and performance issues.
 model: opus
-effort: high
+effort: medium
 skills:
   - code-review-full
   - codex:run
@@ -81,11 +81,11 @@ referenced skills.
 Produce your review from two independent passes over the same diff, then
 consolidate them yourself:
 
-1. **Your own review**, as this agent (opus, high reasoning effort), following
+1. **Your own review**, as this agent (opus, medium reasoning effort), following
    `code-review-full` end to end.
 2. **A second, independent review** from Codex. Use the `codex:run` skill to
    send the same diff (plus the ticket/plan/increment context, when available)
-   to Codex, model `gpt-5.6-sol`, reasoning effort `high`, sandbox
+   to Codex, model `gpt-5.6-sol`, reasoning effort `medium`, sandbox
    `read-only`, timeout 10 minutes. Ask Codex to review against the same
    criteria: does the implementation do what it claims, correctness, scope,
    security leaks, performance/resource leaks. Include the file-open budget
