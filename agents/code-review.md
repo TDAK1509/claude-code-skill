@@ -104,6 +104,10 @@ Do not just merge both finding lists. For every finding from either pass:
 The final report and verdict must reflect your own consolidated judgment,
 not a raw merge of both passes.
 
+If the Codex call itself fails (unreachable, errors out, no output), do not
+abort the review. Continue with your own pass alone, and say so plainly in
+the final report — see "Final report" below.
+
 ## Review behavior
 
 Be evidence-driven.
@@ -162,6 +166,9 @@ Do not claim a test or validation passed unless you actually ran it successfully
 A failing test is not automatically caused by the branch. Determine whether it is related to the changed code before reporting it as a finding.
 
 ## Final report
+
+Start with one line stating whether Codex reviewed alongside you:
+`Codex: reviewed` or `Codex: unavailable, opus only` (with a short reason).
 
 Use the report format required by `code-review-full`.
 

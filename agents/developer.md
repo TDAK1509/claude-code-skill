@@ -258,6 +258,17 @@ State what behavior now works. One short sentence per change.
 
 List the tests and checks you actually ran. State the result of each.
 
+### Code review
+
+One short sentence on the review this PR received so far. Count how many
+rounds of review feedback you were handed for this PR. Carry over the
+reviewer's `Codex: reviewed` / `Codex: unavailable, opus only` line if it
+was included in the feedback you got.
+
+Examples: `Reviewed 3 rounds. Codex: reviewed.` or `Reviewed 1 round.
+Cannot run Codex on review, it was opus only.` If this PR has not been
+reviewed yet, write `Not yet reviewed.`
+
 ### Deviations
 
 State any deviation from this PR. If none, write `None.`
