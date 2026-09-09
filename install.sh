@@ -100,9 +100,9 @@ done
 
 if [[ "$HOOKS" == "yes" ]]; then
   hook_args=()
-  [[ -n "$SETTINGS" ]] && hook_args+=(--settings "$SETTINGS")
-  [[ -n "$HOOK_ACTION" ]] && hook_args+=("$HOOK_ACTION")
-  python3 "$REPO_DIR/hooks/install_hook.py" "${hook_args[@]}"
+  if [[ -n "$SETTINGS" ]]; then hook_args+=(--settings "$SETTINGS"); fi
+  if [[ -n "$HOOK_ACTION" ]]; then hook_args+=("$HOOK_ACTION"); fi
+  python3 "$REPO_DIR/hooks/install_hook.py" ${hook_args[@]+"${hook_args[@]}"}
 fi
 
 echo "Restart Claude Code, or run /doctor, to pick up new skills and hooks."
