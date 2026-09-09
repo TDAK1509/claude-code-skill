@@ -86,9 +86,11 @@ consolidate them yourself:
 2. **A second, independent review** from Codex. Use the `codex:run` skill to
    send the same diff (plus the ticket/plan/increment context, when available)
    to Codex, model `gpt-5.6-sol`, reasoning effort `high`, sandbox
-   `read-only`. Ask Codex to review against the same criteria: does the
-   implementation do what it claims, correctness, scope, security leaks,
-   performance/resource leaks.
+   `read-only`, timeout 10 minutes. Ask Codex to review against the same
+   criteria: does the implementation do what it claims, correctness, scope,
+   security leaks, performance/resource leaks. Include the file-open budget
+   from "Bounded claim verification" below in the prompt you send it —
+   Codex does not know that budget unless you state it.
 
 Do not just merge both finding lists. For every finding from either pass:
 
@@ -107,6 +109,30 @@ not a raw merge of both passes.
 If the Codex call itself fails (unreachable, errors out, no output), do not
 abort the review. Continue with your own pass alone, and say so plainly in
 the final report — see "Final report" below.
+
+## Bounded claim verification
+
+A diff can be small and still make many claims that only resolve by
+checking the rest of the repo: a plan's path:line citations, a doc's counts
+of things ("112 skills", "50 files"), a comment asserting what another file
+does. Verifying a claim like that means opening a file outside the diff.
+
+This is not exhaustive. Do not open every file a claim points at. Do not
+"read the files for every citation" or "count the real folders on disk" —
+that turns a two-file diff into a repo-wide audit, and both your own pass
+and Codex's are bound by the same rule:
+
+- Budget: open at most 15 repo files, total, for this kind of verification
+  (files inside the diff itself do not count against this).
+- Spend the budget on the highest-risk claims first: a claim about
+  production behavior or a number that appears more than once and could
+  drift between mentions, before a claim about internal docs or a single
+  citation that is easy to sanity-check by name alone.
+- Once the budget is spent, or a claim clearly is not decidable from the
+  repo (it asserts something about production, a live system, or external
+  state no file can prove), mark it `unverified` in the report instead of
+  opening more files. `unverified` is a legitimate report outcome, not a
+  gap to fill by trying harder.
 
 ## Review behavior
 
