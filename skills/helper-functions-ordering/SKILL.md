@@ -62,7 +62,11 @@ you move to its sibling.
 `doA1` and `doA2` sit under `doA`, not under `doAll`, because `doA` is what calls
 them. A helper belongs to its caller, not to the file.
 
-When two functions call the same helper, put the helper below the first caller.
+When two functions call the same helper, put the helper below the first caller,
+at that caller's call position. Many callers is not a reason to promote a helper
+to the top of the file.
+
+`references/bad_examples.md` works this through a real 44-function file.
 
 ## Where a new function goes
 
@@ -92,6 +96,16 @@ time, not at definition time. Order is free, so order for the reader.
 If the module runs the call at import time — a top-level `app = build_app()` —
 the definition must come first. That is the language rule again, not a
 preference.
+
+## The hook checks half of it
+
+`helper_order.py` detects one thing: a helper defined above its caller. A file
+can pass it and still read backwards, because the hook does not check the order
+of a caller's own helpers.
+
+The function directly below a caller must be the one that caller calls first.
+Then its second, and so on. Nothing tells you when you get this wrong. Read the
+caller's body top to bottom and check the definitions follow it.
 
 ## A file you touch is a file you order
 
