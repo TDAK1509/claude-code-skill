@@ -1,6 +1,6 @@
 ---
 name: increments-plan
-description: Plan a task as a sequence of small, single-responsibility PRs, each one a working, testable, revertible step toward an outcome. Use when planning or scoping multi-step work, when a task looks too big for one PR, when the user asks for a phased or incremental plan, or when the user asks how to break work into pull requests.
+description: Plan a task as a sequence of small, single-responsibility PRs, each one a working, testable, revertible step toward an outcome. Every PR carries a verification sentence that says how to confirm it works. Use when planning or scoping multi-step work, when a task looks too big for one PR, when the user asks for a phased or incremental plan, or when the user asks how to break work into pull requests.
 ---
 
 # Increments plan
@@ -34,12 +34,50 @@ For every PR in the plan, answer:
 
 - **What can a reviewer see work?** A passing test, a new path a user can hit,
   a flag they can flip, a script they can run. "Trust me, step 4 uses this" is
-  not an answer.
+  not an answer. Write the answer as one sentence — see the verification check
+  below.
 - **What breaks if this ships alone and nothing after it ever lands?** The
   answer must be "nothing in production." A half-built abstraction with no
   caller is not safe to stop at.
 - **How does someone revert just this PR?** If reverting it requires also
   reverting a later PR, they are not two PRs — merge them or reorder them.
+
+## The verification check
+
+Every PR carries one sentence that says how to confirm it works. This is the
+definition of done. A PR without it is not planned, it is only described.
+
+Write it as an action someone performs and an outcome they observe.
+
+- Task: email and password login.
+  Verification: "A user types an email and a password on the login page, and
+  reaches the signed-in page."
+- Task: CSV export.
+  Verification: "A user clicks Export and downloads a file with one row per
+  order."
+- Task: a rate limiter on the send endpoint.
+  Verification: "The eleventh request in one minute returns 429."
+
+These are not verifications:
+
+- "The tests pass." Which test, and what does it prove.
+- "The code compiles." That is not an outcome.
+- "`ExportService` is added." That is the solution, not the effect.
+- "Export works end to end." Nobody can perform that sentence.
+
+Rules for the sentence:
+
+- One sentence. Two means the PR does two things.
+- In the language of the person using the system, not the language of the code.
+- Performable the day the PR merges. If checking it needs a later PR, this step
+  is a fragment. Merge it forward or reorder.
+- Name the observable result: a page, a file, a status code, a row in a table,
+  a log line. Something that changes.
+
+When a step is invisible by design — a flag-guarded path, a new column nothing
+reads yet — the verification is the flag or the query, not the feature. "With
+`NEW_EXPORT=1`, the export page loads and shows the same rows as today." An
+invisible step still has a way to check it, or it is not a step.
 
 ## Order steps so production never breaks
 
@@ -67,8 +105,9 @@ For every PR in the plan, answer:
 For each PR, state:
 
 1. **Outcome** — one sentence, what becomes true after this PR merges.
-2. **Proof** — how a reviewer or a test confirms it, without reading the next
-   PR.
+2. **Verification** — the one sentence from the verification check above: the
+   action someone performs and the result they observe. A reviewer must be able
+   to run it without reading the next PR.
 3. **Revert cost** — what reverting this PR alone does to production: nothing,
    or name the one thing.
 4. **Evidence** — the file, function, or existing pattern you read that this
@@ -104,8 +143,10 @@ assumption about how the codebase probably works. Evidence is what separates
 - Is any step describable only with "and"? Split it.
 - Does every step name the evidence its approach came from, or say plainly
   that none exists?
+- Does every step carry a verification sentence someone can perform on the day
+  it merges?
 - Does the plan contain any unresolved "decide: X" or open question? If so,
   ask in the terminal and resolve it before the plan is done.
 
-Four "yes" and one "no unsplit step" and one "no unresolved question" and the
+Five "yes" and one "no unsplit step" and one "no unresolved question" and the
 plan is ready.
