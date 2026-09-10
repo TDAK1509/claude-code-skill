@@ -105,18 +105,34 @@ invisible step still has a way to check it, or it is not a step.
 For each PR, state:
 
 1. **Outcome** — one sentence, what becomes true after this PR merges.
-2. **Verification** — the one sentence from the verification check above: the
+2. **Solution** — two or three sentences of direction for the coding agent:
+   which part of the system this step changes, which existing pattern it
+   should follow, and anything it must not touch. Enough that the agent starts
+   in the right place, not so much that the design is decided before the code
+   is read.
+3. **Verification** — the one sentence from the verification check above: the
    action someone performs and the result they observe. A reviewer must be able
    to run it without reading the next PR.
-3. **Revert cost** — what reverting this PR alone does to production: nothing,
+4. **Revert cost** — what reverting this PR alone does to production: nothing,
    or name the one thing.
-4. **Evidence** — the file, function, or existing pattern you read that this
+5. **Evidence** — the file, function, or existing pattern you read that this
    step's approach is based on. Name it (`path/to/file.ts:42`, the test that
    already covers this path, the sibling feature that does the same thing).
    If no such evidence exists because nothing like it is in the repo yet, say
    so instead of inventing a source.
 
-Do not write implementation detail beyond what the outcome requires.
+The Solution block is guidance, not a design. It names where to work and what
+to follow; the coding agent decides the classes, functions and signatures once
+it has read the code.
+
+- Solution: "Extend the existing export route rather than adding a new one;
+  follow how the PDF export builds its response. Leave the download UI alone —
+  a later PR wires it up."
+- Not a Solution: "Add an `ExportService` with a `CsvFormatter` strategy and a
+  `formatRow()` helper." That decides code you have not read yet.
+
+Do not write implementation detail beyond what the outcome and this direction
+require.
 
 ## Unclear points go to the terminal, not the plan
 
@@ -145,8 +161,10 @@ assumption about how the codebase probably works. Evidence is what separates
   that none exists?
 - Does every step carry a verification sentence someone can perform on the day
   it merges?
+- Does every step's Solution block point at where to work without deciding the
+  code that has not been read yet?
 - Does the plan contain any unresolved "decide: X" or open question? If so,
   ask in the terminal and resolve it before the plan is done.
 
-Five "yes" and one "no unsplit step" and one "no unresolved question" and the
+Six "yes" and one "no unsplit step" and one "no unresolved question" and the
 plan is ready.
