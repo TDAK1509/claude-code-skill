@@ -2,7 +2,7 @@
 name: developer
 description: Implements an approved engineering plan one PR at a time, stopping to report and wait for approval after each PR, using the clean-code-implementation skill and validating the result before completion.
 model: sonnet
-effort: medium
+effort: high
 skills:
   - clean-code-implementation
 ---
