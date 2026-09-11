@@ -141,6 +141,100 @@ passes the one-sentence test on its own. `switch_to_founding` is now the
 sentence it claims to be — everything else moved to the method whose name
 says what it actually checks.
 
+## Naming the loop's job in a comment instead of in a function
+
+Bad:
+
+```python
+async def resolve_tools(
+    session: AsyncSession, names: Sequence[str], *, resolver: ToolResolver | None = None
+) -> tuple[tuple[RecognizedTool, ...], tuple[str, ...]]:
+    """Resolve the classifier's short, already-segmented names into card content.
+
+    allow-long-function: one loop with one job -- resolve each name, dedupe a hit by slug or a
+    miss by its sanitized text, then file it into whichever output it belongs in; splitting the
+    dedupe from the resolution it depends on would scatter one cohesive pass into pieces that only
+    make sense read together.
+    """
+    resolve = resolver or _resolve_tool_slug
+    recognized: list[RecognizedTool] = []
+    unrecognized: list[str] = []
+    seen_slugs: set[str] = set()
+    seen_unrecognized: set[str] = set()
+    for name in names:
+        wording = name.strip()
+        if not wording:
+            continue
+        match = await resolve(session, _strip_domain_suffix(wording))
+        if match is not None:
+            slug, _label = match
+            if slug not in seen_slugs:
+                seen_slugs.add(slug)
+                recognized.append(RecognizedTool(slug=slug, label=integration_app_label(slug)))
+            continue
+        safe_name = _sanitize_echoed_name(wording)
+        key = safe_name.casefold()
+        if safe_name and key not in seen_unrecognized:
+            seen_unrecognized.add(key)
+            unrecognized.append(safe_name)
+    return tuple(recognized), tuple(unrecognized)
+```
+
+### Why the marker does not hold up
+
+The docstring's `allow-long-function` reason already names two distinct
+steps — "resolve each name" and "dedupe ... then file it" — and calls them
+one job because they run in the same iteration. Running in the same
+iteration is not the same as being one responsibility. "Resolve one name
+into a recognized tool or leftover text" is a complete sentence on its own,
+independent of dedup or of which loop calls it. That sentence is a function
+that does not exist yet; the comment describes it instead of the code
+containing it.
+
+### What splitting it actually looks like
+
+```python
+async def resolve_tools(
+    session: AsyncSession, names: Sequence[str], *, resolver: ToolResolver | None = None
+) -> tuple[tuple[RecognizedTool, ...], tuple[str, ...]]:
+    """Resolve the classifier's short names into recognized tools and leftover text."""
+    resolve = resolver or _resolve_tool_slug
+    recognized: list[RecognizedTool] = []
+    unrecognized: list[str] = []
+    seen_slugs: set[str] = set()
+    seen_unrecognized: set[str] = set()
+    for name in names:
+        outcome = await _classify_tool_name(session, name, resolve)
+        if isinstance(outcome, RecognizedTool):
+            if outcome.slug not in seen_slugs:
+                seen_slugs.add(outcome.slug)
+                recognized.append(outcome)
+        elif outcome:
+            key = outcome.casefold()
+            if key not in seen_unrecognized:
+                seen_unrecognized.add(key)
+                unrecognized.append(outcome)
+    return tuple(recognized), tuple(unrecognized)
+
+
+async def _classify_tool_name(
+    session: AsyncSession, name: str, resolve: ToolResolver
+) -> RecognizedTool | str | None:
+    """A recognized tool, sanitized leftover text, or None for a blank name."""
+    wording = name.strip()
+    if not wording:
+        return None
+    match = await resolve(session, _strip_domain_suffix(wording))
+    if match is not None:
+        slug, _label = match
+        return RecognizedTool(slug=slug, label=integration_app_label(slug))
+    return _sanitize_echoed_name(wording)
+```
+
+The loop now visibly does one job — dedupe and file — and the thing it
+dedupes and files is produced by a function whose name says what it does.
+Neither half needed the escape hatch.
+
 ## The tell to watch for
 
 Reach for `allow-long-function` and ask whether the reason you are about to

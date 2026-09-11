@@ -34,6 +34,15 @@ Pulling out a `helperA` / `helperB` purely to satisfy the threshold often hides 
 smell behind worse names and leaves the real shape untouched. Find true
 responsibility boundaries.
 
+## A loop body is a function without a name
+
+A `for` loop that resolves, then dedupes, then files an item into one of
+several outputs is doing more than one thing per iteration. The resolve step
+is a separable responsibility even though it runs once per item — give it a
+name and extract it, the same as any other responsibility. A docstring or
+comment that names what the loop does is a sign a function should have that
+name instead. See `references/bad_examples.md` for a worked case.
+
 ## Inline before you split
 
 If responsibilities are tangled you may need to first inline methods to see the
