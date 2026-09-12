@@ -235,6 +235,116 @@ The loop now visibly does one job — dedupe and file — and the thing it
 dedupes and files is produced by a function whose name says what it does.
 Neither half needed the escape hatch.
 
+## "One merge pass" hiding a skip check, a key, and a merge
+
+Bad:
+
+```python
+def _coalesce_enqueue_effects(
+    effects: Sequence[tuple[str, dict[str, Any]]],
+) -> list[tuple[str, dict[str, Any]]]:
+    # allow-long-function: one merge pass, splitting hides the target lookup | allow-comment: same reason
+    """Merge "enqueue" effects sharing a ``coalesce_key``, concatenating their list-valued kwargs.
+
+    Runs on the snapshot ``dispatch_side_effects`` was handed — every savepoint rollback this batch
+    will ever take has already happened — so a queuer that opts in gets one dispatch per key without
+    the collector ever mutating an already-queued effect, which a rollback could not then undo. ONLY
+    list-valued fields merge; every other field keeps the FIRST effect's value, so two same-key
+    effects that disagree on a scalar (e.g. ``critical``) silently keep the first's.
+    """
+    merged: list[tuple[str, dict[str, Any]]] = []
+    index_by_key: dict[tuple[Any, Any], int] = {}
+    for effect_type, kwargs in effects:
+        if effect_type != "enqueue" or "coalesce_key" not in kwargs:
+            merged.append((effect_type, kwargs))
+            continue
+        key = (kwargs.get("task_ref"), kwargs["coalesce_key"])
+        payload = {field: value for field, value in kwargs.items() if field != "coalesce_key"}
+        if key not in index_by_key:
+            index_by_key[key] = len(merged)
+            merged.append((effect_type, payload))
+            continue
+        target = merged[index_by_key[key]][1]
+        for field, value in payload.items():
+            if isinstance(value, list) and isinstance(target.get(field), list):
+                target[field].extend(value)
+    return merged
+```
+
+### Why the marker does not hold up
+
+"One merge pass" is doing the same trick as the loop example above: it names
+the whole `for` block as if the block were the unit, when the block itself
+holds three separable questions:
+
+1. Does this effect opt into coalescing at all? (`effect_type`/`coalesce_key` check)
+2. What is its dedup key, with the routing field stripped out of the payload?
+3. Given an existing target, how do the two payloads combine?
+
+Step 3 is itself a second, nested responsibility — the reason the function
+also has a nested `if` inside a nested `for`. None of the three needs the
+other two in scope to be written or tested; "combine two payloads, keeping
+target's scalars and extending its lists" is a sentence with nothing about
+coalesce keys or enqueue effects in it. The reason on the marker, "splitting
+hides the target lookup," is the opposite of true — pulling the lookup and
+the merge into named functions is what makes each one readable on its own.
+
+The savepoint/rollback paragraph is real and load-bearing, but it is a
+constraint on the *caller's contract* (why this runs once per batch, on a
+snapshot), not a description of the merge logic. It survives the split
+unchanged, attached to the function whose name it explains.
+
+### What splitting it actually looks like
+
+```python
+def _coalesce_enqueue_effects(
+    effects: Sequence[tuple[str, dict[str, Any]]],
+) -> list[tuple[str, dict[str, Any]]]:
+    """Merge "enqueue" effects sharing a coalesce_key, concatenating list-valued kwargs.
+
+    Runs on the snapshot ``dispatch_side_effects`` was handed — every savepoint rollback this batch
+    will ever take has already happened — so a queuer that opts in gets one dispatch per key without
+    the collector ever mutating an already-queued effect, which a rollback could not then undo.
+    """
+    merged: list[tuple[str, dict[str, Any]]] = []
+    index_by_key: dict[tuple[Any, Any], int] = {}
+    for effect_type, kwargs in effects:
+        key = _coalesce_key(effect_type, kwargs)
+        if key is None:
+            merged.append((effect_type, kwargs))
+            continue
+        payload = {field: value for field, value in kwargs.items() if field != "coalesce_key"}
+        if key not in index_by_key:
+            index_by_key[key] = len(merged)
+            merged.append((effect_type, payload))
+            continue
+        _extend_list_fields(merged[index_by_key[key]][1], payload)
+    return merged
+
+
+def _coalesce_key(effect_type: str, kwargs: dict[str, Any]) -> tuple[Any, Any] | None:
+    """This effect's dedup key, or None when it does not opt into coalescing."""
+    if effect_type != "enqueue" or "coalesce_key" not in kwargs:
+        return None
+    return (kwargs.get("task_ref"), kwargs["coalesce_key"])
+
+
+def _extend_list_fields(target: dict[str, Any], payload: dict[str, Any]) -> None:
+    """Extend target's list-valued fields in place with payload's matching lists.
+
+    Every other field keeps target's existing value; two same-key effects that disagree
+    on a scalar (e.g. ``critical``) silently keep the first one's.
+    """
+    for field, value in payload.items():
+        if isinstance(value, list) and isinstance(target.get(field), list):
+            target[field].extend(value)
+```
+
+No more nested `if` inside nested `for`. `_coalesce_key` and
+`_extend_list_fields` each pass the one-sentence test standalone; the
+scalar-keeping caveat moved to the function it actually describes instead of
+sitting in the top docstring next to unrelated rollback context.
+
 ## The tell to watch for
 
 Reach for `allow-long-function` and ask whether the reason you are about to
