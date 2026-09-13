@@ -1,7 +1,6 @@
 ---
 name: code-review
 description: Reviews the current implementation branch against main for correctness, scope, security, and performance issues.
-effort: high
 skills:
   - code-review-full
 ---
