@@ -275,12 +275,10 @@ List the tests and checks you actually ran. State the result of each.
 ### Code review
 
 One short sentence on the review this PR received so far. Count how many
-rounds of review feedback you were handed for this PR. Carry over the
-reviewers' model-status line if it was included in the feedback you got.
+rounds of review feedback you were handed for this PR.
 
-Examples: `Reviewed 3 rounds. All configured reviewers completed.` or `Reviewed
-1 round. Two configured reviewers completed; one was unavailable.` If this PR
-has not been reviewed yet, write `Not yet reviewed.`
+Examples: `Reviewed 3 rounds.` or `Reviewed 1 round.` If this PR has not been
+reviewed yet, write `Not yet reviewed.`
 
 ### Deviations
 
