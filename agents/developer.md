@@ -1,7 +1,6 @@
 ---
 name: developer
 description: Implements an approved engineering plan one PR at a time, stopping to report and wait for approval after each PR, using the clean-code-implementation skill and validating the result before completion.
-model: gpt-5.6-luna
 effort: high
 skills:
   - clean-code-implementation
@@ -13,15 +12,12 @@ Your job is execution, not planning.
 
 ## Implementation model
 
-This agent runs on the model in the `model:` field above. It cannot switch
-models by itself.
+This file pins no model. The caller picks one when it starts this agent, and
+otherwise this agent runs on the main conversation's model.
 
-A 401, a 403, or an out-of-credits error kills this agent before it reads a
-single instruction. Nothing written here can recover from that. Only the caller
-that dispatched this agent can retry on another model.
-
-The caller picks the model: the one the request names, or `gpt-5.6-luna` by
-default, or `kimi-k3` when its quota is available.
+This agent cannot switch models by itself. A 401, a 403, or an out-of-credits
+error kills it before it reads a single instruction, so nothing written here can
+recover from that. Only the caller can retry on another model.
 
 Inspect the final diff before reporting completion.
 

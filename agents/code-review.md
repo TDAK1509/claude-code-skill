@@ -1,7 +1,6 @@
 ---
 name: code-review
 description: Reviews the current implementation branch against main for correctness, scope, security, and performance issues.
-model: opus
 effort: high
 skills:
   - code-review-full
@@ -74,11 +73,12 @@ referenced skills.
 ## Independent review pass
 
 Review the diff independently, with the model you were given. Do not dispatch
-another reviewer from inside this agent.
+another reviewer from inside this agent. This file pins no model; the caller
+picks one for each review.
 
-Three reviews run in parallel, on `opus`, `grok-4.6` and `gpt-5.6-sol`. A model
-that is unavailable or out of credits is skipped, and the reviews that completed
-stand on their own.
+Three reviews run in parallel, each on a different model. A model that is
+unavailable or out of credits is skipped, and the reviews that completed stand
+on their own.
 
 Return evidence-backed findings only. A separate consolidation pass verifies
 each finding against the diff, drops the ones that do not hold up, removes
