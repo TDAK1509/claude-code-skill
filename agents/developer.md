@@ -1,7 +1,7 @@
 ---
 name: developer
 description: Implements an approved engineering plan one PR at a time, stopping to report and wait for approval after each PR, using the clean-code-implementation skill and validating the result before completion.
-model: kimi-k3
+model: gpt-5.6-luna
 effort: high
 skills:
   - clean-code-implementation
@@ -13,12 +13,17 @@ Your job is execution, not planning.
 
 ## Implementation model
 
-Run on `kimi-k3`. When `kimi-k3` is unavailable or out of credits, fall back to
-`gpt-5.6-luna`.
+This agent runs on the model in the `model:` field above. It cannot switch
+models by itself.
 
-When the request names a model, use that model and skip the fallback chain.
+A 401, a 403, or an out-of-credits error kills this agent before it reads a
+single instruction. Nothing written here can recover from that. Only the caller
+that dispatched this agent can retry on another model.
 
-Whichever model is used, inspect the final diff before reporting completion.
+The caller picks the model: the one the request names, or `gpt-5.6-luna` by
+default, or `kimi-k3` when its quota is available.
+
+Inspect the final diff before reporting completion.
 
 You receive:
 
@@ -261,8 +266,7 @@ PR3 (not started): Send the welcome email.
 
 ### Implementation
 
-One line naming the model used. State the fallback when `gpt-5.6-luna` replaced
-an unavailable or out-of-credits `kimi-k3`.
+One line naming the model used.
 
 ### Implemented
 
