@@ -5,7 +5,7 @@ description: The rules that bind every line of code you write in this codebase -
 
 # Clean code implementation
 
-Five rules bind every line you write. They are one habit, not five checklists.
+Six rules bind every line you write. They are one habit, not six checklists.
 
 | Rule | Skill | Enforced by |
 | --- | --- | --- |
@@ -14,6 +14,7 @@ Five rules bind every line you write. They are one habit, not five checklists.
 | A name replaces a comment | `self-documenting-names` | `comment_smell.py` |
 | A helper sits below its caller | `helper-functions-ordering` | `helper_order.py` |
 | The code stays maintainable | `maintainable-coding-principles` | nothing — you |
+| The behavior is proven by a test | `tdd` | nothing — you |
 
 Load the skill itself when a rule bites. This page is the index, not the
 content.
@@ -40,18 +41,21 @@ about to write a comment above.
 
 ## The order to apply them
 
-1. **Name it first.** Write the verb before the body. `chargeOrder`, not
+1. **Write the failing test first.** Prove the behavior does not exist yet, or
+   prove the bug is real, before writing the fix — see `tdd`.
+2. **Name it first.** Write the verb before the body. `chargeOrder`, not
    `orderProcessing`. If no single verb fits, you have two functions — stop and
    split before you write either.
-2. **Write the body.** Watch the length. Passing 12 effective lines is a signal
+3. **Write the body.** Watch the length. Passing 12 effective lines is a signal
    to name the responsibilities, not a signal to extract `helperA`.
-3. **Delete the comments.** Every comment you wanted is a name you did not pick.
+4. **Delete the comments.** Every comment you wanted is a name you did not pick.
    Move the meaning, then remove the comment.
-4. **Place it under its caller.** A new helper goes directly below the line that
+5. **Place it under its caller.** A new helper goes directly below the line that
    calls it, never at the top or the bottom of the file.
-5. **Check the wider habits.** Guard clauses, meaningful names, contained
+6. **Check the wider habits.** Guard clauses, meaningful names, contained
    dependencies, unrepresentable invalid states, decisions separate from side
    effects, useful errors, focused changes — see `maintainable-coding-principles`.
+7. **Run the suite green.** Refactor with tests passing throughout — see `tdd`.
 
 ## Before you finish
 
@@ -63,8 +67,9 @@ Read your diff and ask five questions.
 - Is any new helper defined above the function that calls it?
 - Does this design make the code easier for the next engineer to understand,
   safely change, test, and trust?
+- Does every new behavior have a test that failed before the fix and passes now?
 
-Five "no" answers and you are done.
+Six "no" answers and you are done.
 
 ## The escape hatches
 
