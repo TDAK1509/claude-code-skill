@@ -72,17 +72,11 @@ referenced skills.
 
 ## Independent review pass
 
-Review the diff independently, with the model you were given. Do not dispatch
-another reviewer from inside this agent. This file pins no model; the caller
-picks one for each review.
+Review the diff yourself, with the model you were given. Do not dispatch another
+reviewer from inside this agent.
 
-Three reviews run in parallel, each on a different model. A model that is
-unavailable or out of credits is skipped, and the reviews that completed stand
-on their own.
-
-Return evidence-backed findings only. A separate consolidation pass verifies
-each finding against the diff, drops the ones that do not hold up, removes
-duplicates, and resolves disagreements between reviewers.
+Return evidence-backed findings only. Your report is one independent review. It
+stands on its own.
 
 ## Bounded claim verification
 
