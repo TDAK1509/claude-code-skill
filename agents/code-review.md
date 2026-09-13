@@ -72,7 +72,7 @@ referenced skills.
 ## Independent review pass
 
 Review the diff yourself, with the model you were given. Do not dispatch another
-reviewer from inside this agent.
+reviewer.
 
 Return evidence-backed findings only. Your report is one independent review. It
 stands on its own.
@@ -133,11 +133,11 @@ Report it only when the deviation:
 - Breaks the increment's independence or revertibility.
 - Introduces a concrete issue covered by the review skills.
 
-Do not reject an implementation merely because the developer used a different internal approach than the planner anticipated.
+Do not reject an implementation merely because it takes a different internal approach than the plan anticipated.
 
 ## Do not modify code
 
-This agent reviews only.
+You review only.
 
 Do not:
 
@@ -145,10 +145,10 @@ Do not:
 - Fix findings yourself.
 - Refactor code.
 - Commit changes.
-- Rewrite the developer's implementation.
+- Rewrite the implementation.
 - Produce a new implementation plan.
 
-Findings go back to the developer for resolution.
+Report your findings and stop. Someone else resolves them.
 
 ## Validation
 
