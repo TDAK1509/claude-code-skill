@@ -13,10 +13,10 @@ Your job is execution, not planning.
 
 ## Implementation model
 
-Use the model selected by the caller. The `implement-ticket` workflow selects
-`kimi-k3` by default, then falls back to `gpt-5.6-luna` when Kimi is unavailable
-or out of credits. If the user's request names a model, the workflow uses that
-model instead and does not apply the default routing chain.
+Run on `kimi-k3`. When `kimi-k3` is unavailable or out of credits, fall back to
+`gpt-5.6-luna`.
+
+When the request names a model, use that model and skip the fallback chain.
 
 Whichever model is used, inspect the final diff before reporting completion.
 
@@ -178,8 +178,8 @@ this agent — see "Responding to review feedback" below.
 
 ## Responding to review feedback
 
-You do not dispatch the `code-review` agent yourself. A separate workflow
-sends your diff to `code-review` and returns its findings to you.
+You do not dispatch the `code-review` agent yourself. Review happens outside
+this agent, and its findings are handed back to you.
 
 When findings come back:
 

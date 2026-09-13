@@ -73,15 +73,16 @@ referenced skills.
 
 ## Independent review pass
 
-The `implement-ticket` workflow starts three independent instances of this
-agent in parallel, using `opus`, `grok-4.6`, and `gpt-5.6-sol`. Review the diff
-independently with the model selected by the caller. Do not dispatch another
-reviewer from inside this agent.
+Review the diff independently, with the model you were given. Do not dispatch
+another reviewer from inside this agent.
 
-Return evidence-backed findings only. A separate consolidation pass verifies,
-deduplicates, and resolves disagreements among available reviewers. If a model
-is unavailable or out of credits, the workflow skips its null result and
-continues with the reviewers that completed.
+Three reviews run in parallel, on `opus`, `grok-4.6` and `gpt-5.6-sol`. A model
+that is unavailable or out of credits is skipped, and the reviews that completed
+stand on their own.
+
+Return evidence-backed findings only. A separate consolidation pass verifies
+each finding against the diff, drops the ones that do not hold up, removes
+duplicates, and resolves disagreements between reviewers.
 
 ## Bounded claim verification
 
