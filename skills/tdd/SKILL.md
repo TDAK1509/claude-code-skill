@@ -10,6 +10,9 @@ description: Drives development with tests using the red-green-refactor loop. Us
 > `cda4542ade0f3c532494b9a48837eb01d39925f1` (2026-07-30). MIT licensed. This is
 > a frozen local copy so upstream edits do not change our behavior; re-vendor
 > deliberately if we want the update.
+>
+> Local deviation from upstream: "Step 4: COMMIT" below, and the commit entries
+> in Red Flags and Verification. Upstream ends the cycle at REFACTOR.
 
 ## Overview
 
@@ -42,12 +45,12 @@ The examples below use TypeScript for illustration; the workflow is identical in
 ## The TDD Cycle
 
 ```
-    RED                GREEN              REFACTOR
- Write a test    Write minimal code    Clean up the
- that fails  ──→  to make it pass  ──→  implementation  ──→  (repeat)
-      │                  │                    │
-      ▼                  ▼                    ▼
-   Test FAILS        Test PASSES         Tests still PASS
+    RED                GREEN              REFACTOR             COMMIT
+ Write a test    Write minimal code    Clean up the        One commit for
+ that fails  ──→  to make it pass  ──→  implementation  ──→  the whole loop  ──→  (repeat)
+      │                  │                    │                    │
+      ▼                  ▼                    ▼                    ▼
+   Test FAILS        Test PASSES         Tests still PASS     History is green
 ```
 
 ### Step 1: RED — Write a Failing Test
@@ -96,6 +99,29 @@ With tests green, improve the code without changing behavior:
 - Optimize if necessary
 
 Run tests after every refactor step to confirm nothing broke.
+
+### Step 4: COMMIT — One Loop, One Commit
+
+Close every loop with a commit. The test, the code that makes it pass, and the
+refactor go in together, as one commit.
+
+Commit only when the suite is green. Never commit on RED. Every commit in the
+history must pass its own tests, so any commit can be checked out, bisected, or
+reverted on its own.
+
+Do not batch several loops into one commit. Do not split one loop across several
+commits. If a loop grew too large to describe in one commit subject, the test was
+too broad — that is a signal to split the behavior, not the commit.
+
+Write the subject as the behavior the loop added, not as the mechanics:
+
+```
+Reject a task with a blank title
+```
+
+Not `add test`, not `make test pass`, not `wip`.
+
+Then start the next loop from a clean tree.
 
 ## The Prove-It Pattern (Bug Fixes)
 
@@ -385,6 +411,9 @@ For JavaScript/TypeScript testing patterns illustrating these principles — Jes
 - Test names that don't describe the expected behavior
 - Skipping tests to make the suite pass
 - Running the same test command twice in a row without any intervening code change
+- Committing on RED, with a failing suite
+- One commit carrying several red-green-refactor loops
+- Commit subjects that describe the mechanics (`add test`, `fix`, `wip`) instead of the behavior
 
 ## Verification
 
@@ -396,5 +425,7 @@ After completing any implementation:
 - [ ] Test names describe the behavior being verified
 - [ ] No tests were skipped or disabled
 - [ ] Coverage hasn't decreased (if tracked)
+- [ ] Every red-green-refactor loop closed with exactly one commit
+- [ ] Every commit passes its own tests
 
 **Note:** Run each test command after a change that could affect the result. After a clean run, don't repeat the same command unless the code has changed since — re-running on unchanged code adds no confidence.
