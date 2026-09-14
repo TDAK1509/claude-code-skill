@@ -56,10 +56,12 @@ about to write a comment above.
    dependencies, unrepresentable invalid states, decisions separate from side
    effects, useful errors, focused changes — see `maintainable-coding-principles`.
 7. **Run the suite green.** Refactor with tests passing throughout — see `tdd`.
+8. **Commit the loop.** One commit carries the test, the code that passes it,
+   and the refactor. Commit on green, never on red — see `tdd`.
 
 ## Before you finish
 
-Read your diff and ask five questions.
+Read your diff and ask six questions.
 
 - Does every new function name start with a verb that is true?
 - Is any new function over the limit without a written reason?
@@ -91,5 +93,5 @@ helpers under their callers. Commit that move on its own.
 ## What this does not cover
 
 Scope. How much to change is a separate decision — see the `increments-plan`
-skill. Generated and vendored files are outside all five rules; change the
+skill. Generated and vendored files are outside all six rules; change the
 generator, not the output.
