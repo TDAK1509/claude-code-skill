@@ -105,11 +105,10 @@ invisible step still has a way to check it, or it is not a step.
 For each PR, state:
 
 1. **Outcome** — one sentence, what becomes true after this PR merges.
-2. **Solution** — two or three sentences of direction for the coding agent:
-   which part of the system this step changes, which existing pattern it
-   should follow, and anything it must not touch. Enough that the agent starts
-   in the right place, not so much that the design is decided before the code
-   is read.
+2. **Solution map** — a map of the change: which parts of the system take
+   part, how data or control moves between them, and which parts this step
+   must not touch. Draw it as a diagram when the flow has more than two hops.
+   This is the shape of the solution, not the code that builds it.
 3. **Verification** — the one sentence from the verification check above: the
    action someone performs and the result they observe. A reviewer must be able
    to run it without reading the next PR.
@@ -121,17 +120,38 @@ For each PR, state:
    If no such evidence exists because nothing like it is in the repo yet, say
    so instead of inventing a source.
 
-The Solution block is guidance, not a design. It names where to work and what
-to follow; the coding agent decides the classes, functions and signatures once
-it has read the code.
+## The solution map
 
-- Solution: "Extend the existing export route rather than adding a new one;
-  follow how the PDF export builds its response. Leave the download UI alone —
-  a later PR wires it up."
-- Not a Solution: "Add an `ExportService` with a `CsvFormatter` strategy and a
-  `formatRow()` helper." That decides code you have not read yet.
+The map is the vision, not the implementation. It shows the pieces and the flow
+between them, so a reader sees the whole shape before any code exists.
 
-Do not write implementation detail beyond what the outcome and this direction
+Draw it when the flow has more than two hops:
+
+```
+Browser ──GET /export?format=csv──▶ Export route ──▶ Row builder ──▶ CSV response
+                                          │
+                                          └──▶ PDF path, untouched
+```
+
+Write it as prose when the shape is simple: "The export route grows a second
+format branch. The PDF path and the download UI stay as they are."
+
+Either form answers the same three questions:
+
+- Which parts of the system take part?
+- How does data or control move between them?
+- Which parts must this step leave alone?
+
+It answers none of these: which classes exist, what the functions are called,
+what the signatures are, which pattern the code uses. The coding agent decides
+all of that once it has read the code.
+
+- A map: "Extend the existing export route rather than adding a new one. Leave
+  the download UI alone — a later PR wires it up."
+- Not a map: "Add an `ExportService` with a `CsvFormatter` strategy and a
+  `formatRow()` helper." That is code, and the code has not been read yet.
+
+Do not write implementation detail beyond what the outcome and this map
 require.
 
 ## Unclear points go to the terminal, not the plan
@@ -161,8 +181,8 @@ assumption about how the codebase probably works. Evidence is what separates
   that none exists?
 - Does every step carry a verification sentence someone can perform on the day
   it merges?
-- Does every step's Solution block point at where to work without deciding the
-  code that has not been read yet?
+- Does every step's solution map show the shape of the change without naming
+  the code that will implement it?
 - Does the plan contain any unresolved "decide: X" or open question? If so,
   ask in the terminal and resolve it before the plan is done.
 
