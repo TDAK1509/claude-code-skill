@@ -1,6 +1,6 @@
 ---
 name: increments-plan
-description: Plan a task as a sequence of small, single-responsibility PRs, each one a working, testable, revertible step toward an outcome. Every PR carries a verification sentence that says how to confirm it works. Use when planning or scoping multi-step work, when a task looks too big for one PR, when the user asks for a phased or incremental plan, or when the user asks how to break work into pull requests.
+description: Plan a task as a sequence of small, single-responsibility PRs, each one a working, testable, revertible step toward an outcome. Every PR carries an outcome list: the steps someone runs to confirm it works. Use when planning or scoping multi-step work, when a task looks too big for one PR, when the user asks for a phased or incremental plan, or when the user asks how to break work into pull requests.
 ---
 
 # Increments plan
@@ -34,49 +34,65 @@ For every PR in the plan, answer:
 
 - **What can a reviewer see work?** A passing test, a new path a user can hit,
   a flag they can flip, a script they can run. "Trust me, step 4 uses this" is
-  not an answer. Write the answer as one sentence — see the verification check
-  below.
+  not an answer. Write the answer as the outcome list — see "The outcome is a
+  test someone can run" below.
 - **What breaks if this ships alone and nothing after it ever lands?** The
   answer must be "nothing in production." A half-built abstraction with no
   caller is not safe to stop at.
 - **How does someone revert just this PR?** If reverting it requires also
   reverting a later PR, they are not two PRs — merge them or reorder them.
 
-## The verification check
+## The outcome is a test someone can run
 
-Every PR carries one sentence that says how to confirm it works. This is the
-definition of done. A PR without it is not planned, it is only described.
+Every PR carries its outcome as a short list of steps. This is the definition of
+done. A PR without it is not planned, it is only described.
 
-Write it as an action someone performs and an outcome they observe.
+Write it as a manual test. Each bullet is one action and the result it produces.
+Someone performs the list top to bottom, the day the PR merges.
 
-- Task: email and password login.
-  Verification: "A user types an email and a password on the login page, and
-  reaches the signed-in page."
-- Task: CSV export.
-  Verification: "A user clicks Export and downloads a file with one row per
-  order."
-- Task: a rate limiter on the send endpoint.
-  Verification: "The eleventh request in one minute returns 429."
+Task: email and password login.
 
-These are not verifications:
+- Open the login page.
+- Type a registered email and its password. Submit.
+- The signed-in page loads.
+- Type a wrong password. Submit.
+- The page shows `Invalid email or password` and stays on the login page.
+
+Task: CSV export.
+
+- Open the orders page.
+- Click Export.
+- A `.csv` file downloads.
+- The file holds a header row and one row per order.
+
+Task: a rate limiter on the send endpoint.
+
+- Send ten requests in one minute. Each returns `200`.
+- Send an eleventh in the same minute. It returns `429`.
+- Wait a minute. The next request returns `200`.
+
+These are not outcomes:
 
 - "The tests pass." Which test, and what does it prove.
 - "The code compiles." That is not an outcome.
 - "`ExportService` is added." That is the solution, not the effect.
 - "Export works end to end." Nobody can perform that sentence.
 
-Rules for the sentence:
+Rules for the list:
 
-- One sentence. Two means the PR does two things.
+- One action per bullet. Short and direct.
+- Three to six bullets. More means the PR does more than one thing.
+- In order. The reader follows them like a manual test.
 - In the language of the person using the system, not the language of the code.
-- Performable the day the PR merges. If checking it needs a later PR, this step
-  is a fragment. Merge it forward or reorder.
-- Name the observable result: a page, a file, a status code, a row in a table,
-  a log line. Something that changes.
+- Performable the day the PR merges. If a bullet needs a later PR, this step is
+  a fragment. Merge it forward or reorder.
+- Name what changes: a page, a file, a status code, a row in a table, a log
+  line.
+- Cover the failure the change is about, not only the happy path.
 
 When a step is invisible by design — a flag-guarded path, a new column nothing
-reads yet — the verification is the flag or the query, not the feature. "With
-`NEW_EXPORT=1`, the export page loads and shows the same rows as today." An
+reads yet — the outcome is the flag or the query, not the feature. "Set
+`NEW_EXPORT=1`. Open the export page. It shows the same rows as today." An
 invisible step still has a way to check it, or it is not a step.
 
 ## Order steps so production never breaks
@@ -104,17 +120,16 @@ invisible step still has a way to check it, or it is not a step.
 
 For each PR, state:
 
-1. **Outcome** — one sentence, what becomes true after this PR merges.
+1. **Outcome** — the definition of done as a short list of steps, each one an
+   action and the result it produces. See "The outcome is a test someone can
+   run" above.
 2. **Solution map** — a map of the change: which parts of the system take
    part, how data or control moves between them, and which parts this step
    must not touch. Draw it as a diagram when the flow has more than two hops.
    This is the shape of the solution, not the code that builds it.
-3. **Verification** — the one sentence from the verification check above: the
-   action someone performs and the result they observe. A reviewer must be able
-   to run it without reading the next PR.
-4. **Revert cost** — what reverting this PR alone does to production: nothing,
+3. **Revert cost** — what reverting this PR alone does to production: nothing,
    or name the one thing.
-5. **Evidence** — the file, function, or existing pattern you read that this
+4. **Evidence** — the file, function, or existing pattern you read that this
    step's approach is based on. Name it (`path/to/file.ts:42`, the test that
    already covers this path, the sibling feature that does the same thing).
    If no such evidence exists because nothing like it is in the repo yet, say
@@ -179,8 +194,8 @@ assumption about how the codebase probably works. Evidence is what separates
 - Is any step describable only with "and"? Split it.
 - Does every step name the evidence its approach came from, or say plainly
   that none exists?
-- Does every step carry a verification sentence someone can perform on the day
-  it merges?
+- Does every step carry an outcome list someone can perform on the day it
+  merges?
 - Does every step's solution map show the shape of the change without naming
   the code that will implement it?
 - Does the plan contain any unresolved "decide: X" or open question? If so,
