@@ -123,19 +123,34 @@ For each PR, state:
 1. **Outcome** — the definition of done as a short list of steps, each one an
    action and the result it produces. See "The outcome is a test someone can
    run" above.
-2. **Solution map** — a map of the change: which parts of the system take
+2. **Solution** — two or three sentences on the approach in plain terms. What
+   changes, why this way, and what stays untouched.
+3. **Solution map** — a map of the change: which parts of the system take
    part, how data or control moves between them, and which parts this step
    must not touch. Draw it as a diagram when the flow has more than two hops.
-   This is the shape of the solution, not the code that builds it.
-3. **Revert cost** — what reverting this PR alone does to production: nothing,
+4. **Revert cost** — what reverting this PR alone does to production: nothing,
    or name the one thing.
-4. **Evidence** — the file, function, or existing pattern you read that this
+5. **Evidence** — the file, function, or existing pattern you read that this
    step's approach is based on. Name it (`path/to/file.ts:42`, the test that
    already covers this path, the sibling feature that does the same thing).
    If no such evidence exists because nothing like it is in the repo yet, say
    so instead of inventing a source.
 
-## The solution map
+## The solution
+
+The solution has two parts: a brief explanation, then a map. Neither holds code.
+
+### The explanation
+
+Two or three sentences in plain terms. What changes, why this way and not
+another, and what stays untouched. A reader who has not opened the repository
+must be able to follow it.
+
+"CSV export rides on the route that already serves PDF export, because both read
+the same order rows. Only the response format differs. Leave the download UI
+alone — a later PR wires it up."
+
+### The map
 
 The map is the vision, not the implementation. It shows the pieces and the flow
 between them, so a reader sees the whole shape before any code exists.
@@ -157,16 +172,16 @@ Either form answers the same three questions:
 - How does data or control move between them?
 - Which parts must this step leave alone?
 
-It answers none of these: which classes exist, what the functions are called,
-what the signatures are, which pattern the code uses. The coding agent decides
-all of that once it has read the code.
+### Neither part holds code
 
-- A map: "Extend the existing export route rather than adding a new one. Leave
-  the download UI alone — a later PR wires it up."
-- Not a map: "Add an `ExportService` with a `CsvFormatter` strategy and a
+Both parts answer none of these: which classes exist, what the functions are
+called, what the signatures are, which pattern the code follows. The coding
+agent decides all of that once it has read the code.
+
+- Not a solution: "Add an `ExportService` with a `CsvFormatter` strategy and a
   `formatRow()` helper." That is code, and the code has not been read yet.
 
-Do not write implementation detail beyond what the outcome and this map
+Do not write implementation detail beyond what the outcome and this solution
 require.
 
 ## Unclear points go to the terminal, not the plan
@@ -196,8 +211,8 @@ assumption about how the codebase probably works. Evidence is what separates
   that none exists?
 - Does every step carry an outcome list someone can perform on the day it
   merges?
-- Does every step's solution map show the shape of the change without naming
-  the code that will implement it?
+- Does every step explain its approach and map the change, without naming the
+  code that will implement it?
 - Does the plan contain any unresolved "decide: X" or open question? If so,
   ask in the terminal and resolve it before the plan is done.
 
