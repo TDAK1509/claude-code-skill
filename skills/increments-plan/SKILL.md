@@ -1,6 +1,6 @@
 ---
 name: increments-plan
-description: Plan a task as a sequence of small, single-responsibility PRs, each one a working, testable, revertible step toward an outcome. Every PR carries an outcome list — the steps someone runs to confirm it works. Use when planning or scoping multi-step work, when a task looks too big for one PR, when the user asks for a phased or incremental plan, or when the user asks how to break work into pull requests.
+description: Plan a task as a sequence of small, single-responsibility PRs, each one a working, testable, revertible step toward an outcome. Every PR carries an outcome list — the steps someone runs to confirm it works — and a test list of the scenarios it covers. Use when planning or scoping multi-step work, when a task looks too big for one PR, when the user asks for a phased or incremental plan, or when the user asks how to break work into pull requests.
 ---
 
 # Increments plan
@@ -128,9 +128,11 @@ For each PR, state:
 3. **Solution map** — a map of the change: which parts of the system take
    part, how data or control moves between them, and which parts this step
    must not touch. Draw it as a diagram when the flow has more than two hops.
-4. **Revert cost** — what reverting this PR alone does to production: nothing,
+4. **Test list** — the tests this PR adds, one line each, as scenarios: given
+   X, do Y, expect Z. See "The test list" below.
+5. **Revert cost** — what reverting this PR alone does to production: nothing,
    or name the one thing.
-5. **Evidence** — the file, function, or existing pattern you read that this
+6. **Evidence** — the file, function, or existing pattern you read that this
    step's approach is based on. Name it (`path/to/file.ts:42`, the test that
    already covers this path, the sibling feature that does the same thing).
    If no such evidence exists because nothing like it is in the repo yet, say
@@ -184,6 +186,37 @@ agent decides all of that once it has read the code.
 Do not write implementation detail beyond what the outcome and this solution
 require.
 
+## The test list
+
+Every PR names the tests it adds. One line per test, written as a scenario:
+given X, do Y, expect Z. The list is what the coding agent writes tests for, so
+it must cover the behaviour the PR is about — the failures as well as the happy
+path.
+
+Task: CSV export.
+
+- Given an account with three orders, when the export runs, then the file holds
+  a header row and three rows.
+- Given an account with no orders, when the export runs, then the file holds the
+  header row and nothing else.
+- Given an order whose customer name holds a comma, when the export runs, then
+  the name stays in one column.
+- Given a signed-out visitor, when the export URL is requested, then the
+  response is `401` and no file is produced.
+
+Rules for the list:
+
+- One scenario per line, in the given/do/expect shape.
+- Name the condition that makes the case different — an empty list, a comma in
+  the data, a missing permission — not just "the happy case" and "the error
+  case".
+- No code: no test file names, no function or helper names, no framework, no
+  assertion syntax. The coding agent decides all of that.
+- Only tests this PR adds. A behaviour a later PR introduces is tested in that
+  PR.
+- If a step genuinely adds no test — a pure rename, a config move — say that
+  and say why, instead of inventing one.
+
 ## Unclear points go to the terminal, not the plan
 
 The plan holds only decided points. If a step needs a decision or approval
@@ -213,8 +246,10 @@ assumption about how the codebase probably works. Evidence is what separates
   merges?
 - Does every step explain its approach and map the change, without naming the
   code that will implement it?
+- Does every step list the tests it adds as given/do/expect scenarios, or say
+  plainly that it adds none and why?
 - Does the plan contain any unresolved "decide: X" or open question? If so,
   ask in the terminal and resolve it before the plan is done.
 
-Six "yes" and one "no unsplit step" and one "no unresolved question" and the
+Seven "yes" and one "no unsplit step" and one "no unresolved question" and the
 plan is ready.
