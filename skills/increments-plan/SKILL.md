@@ -180,6 +180,7 @@ is green and committed.
 Rules for the list:
 
 - One scenario per line, in the given/do/expect shape.
+- No "or" in a scenario. See "One case per test" below.
 - In writing order. Each test depends only on the ones above it.
 - Name the condition that makes the case different — an empty list, a comma in
   the data, a missing permission — not just "the happy case" and "the error
@@ -190,6 +191,34 @@ Rules for the list:
   PR.
 - If a step genuinely adds no test — a pure rename, a config move — say that
   and say why, instead of inventing one.
+
+### One case per test
+
+A scenario that lists alternatives is not one test. It is several, hiding behind
+an "or".
+
+Not one test:
+
+> Given a `.pdf`, `.pptx`, `.docx` or `.xlsx` upload that returns on a platform
+> whose upload lands on return, when it lands, then a check is queued for that
+> run.
+
+That is four tests, one per file type:
+
+1. Given a `.pdf` upload that returns on a platform whose upload lands on
+   return, when it lands, then a check is queued for that run.
+2. Given a `.pptx` upload, same platform and same landing, then a check is
+   queued for that run.
+3. Given a `.docx` upload, same platform and same landing, then a check is
+   queued for that run.
+4. Given a `.xlsx` upload, same platform and same landing, then a check is
+   queued for that run.
+
+Each one fails on its own, so each one gets its own loop and its own commit. An
+"or" in a scenario hides which case is broken when the test goes red.
+
+The same holds for a list of status codes, a list of roles, a list of
+environments, or any other "A, B or C" in the given or the expect.
 
 ### Neither part holds code
 
@@ -231,7 +260,7 @@ assumption about how the codebase probably works. Evidence is what separates
 - Does every step carry an outcome list someone can perform on the day it
   merges?
 - Does every step explain its approach and list the tests it adds, in writing
-  order, without naming the code that will implement it?
+  order, one case per test, without naming the code that will implement it?
 - Does the plan contain any unresolved "decide: X" or open question? If so,
   ask in the terminal and resolve it before the plan is done.
 
