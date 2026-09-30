@@ -1,6 +1,6 @@
 ---
 name: increments-plan
-description: Plan a task as a sequence of small, single-responsibility PRs, each one a working, testable, revertible step toward an outcome. Every PR carries an outcome list — the steps someone runs to confirm it works — and a test list of the scenarios it covers. Use when planning or scoping multi-step work, when a task looks too big for one PR, when the user asks for a phased or incremental plan, or when the user asks how to break work into pull requests.
+description: Plan a task as a sequence of small, single-responsibility PRs, each one a working, testable, revertible step toward an outcome. Every PR carries an outcome list — the steps someone runs to confirm it works — and its tests in the order they get written, one tdd loop each. Use when planning or scoping multi-step work, when a task looks too big for one PR, when the user asks for a phased or incremental plan, or when the user asks how to break work into pull requests.
 ---
 
 # Increments plan
@@ -123,16 +123,12 @@ For each PR, state:
 1. **Outcome** — the definition of done as a short list of steps, each one an
    action and the result it produces. See "The outcome is a test someone can
    run" above.
-2. **Solution** — two or three sentences on the approach in plain terms. What
-   changes, why this way, and what stays untouched.
-3. **Solution map** — a map of the change: which parts of the system take
-   part, how data or control moves between them, and which parts this step
-   must not touch. Draw it as a diagram when the flow has more than two hops.
-4. **Test list** — the tests this PR adds, one line each, as scenarios: given
-   X, do Y, expect Z. See "The test list" below.
-5. **Revert cost** — what reverting this PR alone does to production: nothing,
+2. **Solution** — the approach in two or three sentences, then the tests this
+   PR adds, in the order they get written. Each test is one `tdd` loop. See
+   "The solution" below.
+3. **Revert cost** — what reverting this PR alone does to production: nothing,
    or name the one thing.
-6. **Evidence** — the file, function, or existing pattern you read that this
+4. **Evidence** — the file, function, or existing pattern you read that this
    step's approach is based on. Name it (`path/to/file.ts:42`, the test that
    already covers this path, the sibling feature that does the same thing).
    If no such evidence exists because nothing like it is in the repo yet, say
@@ -140,7 +136,7 @@ For each PR, state:
 
 ## The solution
 
-The solution has two parts: a brief explanation, then a map. Neither holds code.
+Two parts: a brief explanation, then the tests in order. Neither holds code.
 
 ### The explanation
 
@@ -152,27 +148,48 @@ must be able to follow it.
 the same order rows. Only the response format differs. Leave the download UI
 alone — a later PR wires it up."
 
-### The map
+### The tests, in order
 
-The map is the vision, not the implementation. It shows the pieces and the flow
-between them, so a reader sees the whole shape before any code exists.
-
-Draw it when the flow has more than two hops:
+The coding agent builds the PR with the `tdd` skill, one loop per test:
 
 ```
-Browser ──GET /export?format=csv──▶ Export route ──▶ Row builder ──▶ CSV response
-                                          │
-                                          └──▶ PDF path, untouched
+write the failing test → make it pass → refactor → commit
 ```
 
-Write it as prose when the shape is simple: "The export route grows a second
-format branch. The PDF path and the download UI stay as they are."
+So the plan lists the tests in the order they get written. That order is the
+implementation order, and it must be correct: each test has to be writable and
+passable with only the tests above it in place. A test that needs a later test's
+code sits in the wrong place — move it down.
 
-Either form answers the same three questions:
+One line per test, as a scenario: given X, do Y, expect Z.
 
-- Which parts of the system take part?
-- How does data or control move between them?
-- Which parts must this step leave alone?
+Task: CSV export.
+
+1. Given an account with three orders, when the export runs, then the file holds
+   a header row and three rows.
+2. Given an account with no orders, when the export runs, then the file holds the
+   header row and nothing else.
+3. Given an order whose customer name holds a comma, when the export runs, then
+   the name stays in one column.
+4. Given a signed-out visitor, when the export URL is requested, then the
+   response is `401` and no file is produced.
+
+Four tests, four loops, four commits. The PR is done when every test in the list
+is green and committed.
+
+Rules for the list:
+
+- One scenario per line, in the given/do/expect shape.
+- In writing order. Each test depends only on the ones above it.
+- Name the condition that makes the case different — an empty list, a comma in
+  the data, a missing permission — not just "the happy case" and "the error
+  case".
+- No code: no test file names, no function or helper names, no framework, no
+  assertion syntax. The coding agent decides all of that.
+- Only tests this PR adds. A behaviour a later PR introduces is tested in that
+  PR.
+- If a step genuinely adds no test — a pure rename, a config move — say that
+  and say why, instead of inventing one.
 
 ### Neither part holds code
 
@@ -185,37 +202,6 @@ agent decides all of that once it has read the code.
 
 Do not write implementation detail beyond what the outcome and this solution
 require.
-
-## The test list
-
-Every PR names the tests it adds. One line per test, written as a scenario:
-given X, do Y, expect Z. The list is what the coding agent writes tests for, so
-it must cover the behaviour the PR is about — the failures as well as the happy
-path.
-
-Task: CSV export.
-
-- Given an account with three orders, when the export runs, then the file holds
-  a header row and three rows.
-- Given an account with no orders, when the export runs, then the file holds the
-  header row and nothing else.
-- Given an order whose customer name holds a comma, when the export runs, then
-  the name stays in one column.
-- Given a signed-out visitor, when the export URL is requested, then the
-  response is `401` and no file is produced.
-
-Rules for the list:
-
-- One scenario per line, in the given/do/expect shape.
-- Name the condition that makes the case different — an empty list, a comma in
-  the data, a missing permission — not just "the happy case" and "the error
-  case".
-- No code: no test file names, no function or helper names, no framework, no
-  assertion syntax. The coding agent decides all of that.
-- Only tests this PR adds. A behaviour a later PR introduces is tested in that
-  PR.
-- If a step genuinely adds no test — a pure rename, a config move — say that
-  and say why, instead of inventing one.
 
 ## Unclear points go to the terminal, not the plan
 
@@ -244,12 +230,10 @@ assumption about how the codebase probably works. Evidence is what separates
   that none exists?
 - Does every step carry an outcome list someone can perform on the day it
   merges?
-- Does every step explain its approach and map the change, without naming the
-  code that will implement it?
-- Does every step list the tests it adds as given/do/expect scenarios, or say
-  plainly that it adds none and why?
+- Does every step explain its approach and list the tests it adds, in writing
+  order, without naming the code that will implement it?
 - Does the plan contain any unresolved "decide: X" or open question? If so,
   ask in the terminal and resolve it before the plan is done.
 
-Seven "yes" and one "no unsplit step" and one "no unresolved question" and the
+Six "yes" and one "no unsplit step" and one "no unresolved question" and the
 plan is ready.
