@@ -177,9 +177,26 @@ Task: CSV export.
 Four tests, four loops, four commits. The PR is done when every test in the list
 is green and committed.
 
+When a PR touches both sides, prefix every test with `Backend:` or `Frontend:`,
+so the split is visible in the list:
+
+1. Backend: given an account with three orders, when the export endpoint is
+   called, then the response holds a header row and three rows.
+2. Backend: given a signed-out visitor, when the export endpoint is called, then
+   the response is `401`.
+3. Frontend: given the orders page, when Export is clicked, then the browser
+   downloads the returned file.
+4. Frontend: given the export endpoint returns `401`, when Export is clicked,
+   then the page shows a sign-in prompt.
+
+Skip the prefix when the whole PR is backend only or frontend only. The CSV
+export list above carries none, because that PR is backend only.
+
 Rules for the list:
 
 - One scenario per line, in the given/do/expect shape.
+- Prefix each test with `Backend:` or `Frontend:` when the PR touches both
+  sides. Skip the prefix when the PR touches one side only.
 - No "or" in a scenario. See "One case per test" below.
 - In writing order. Each test depends only on the ones above it.
 - Name the condition that makes the case different — an empty list, a comma in
