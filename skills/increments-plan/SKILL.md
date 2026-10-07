@@ -1,6 +1,6 @@
 ---
 name: increments-plan
-description: Plan a task as a sequence of small, single-responsibility PRs, each one a working, testable, revertible step toward an outcome. Every PR carries an outcome list — the steps someone runs to confirm it works — and its tests in the order they get written, one tdd loop each. Use when planning or scoping multi-step work, when a task looks too big for one PR, when the user asks for a phased or incremental plan, or when the user asks how to break work into pull requests.
+description: Plan a task as a sequence of small, single-responsibility PRs, each one a working, testable, revertible step toward an outcome. Every PR carries an outcome list — the steps someone runs to confirm it works — and its tests in the order they get written, one tdd loop each. It starts from a map of the existing behavior, updated with the request. Use when planning or scoping multi-step work, when a task looks too big for one PR, when the user asks for a phased or incremental plan, or when the user asks how to break work into pull requests.
 ---
 
 # Increments plan
@@ -8,6 +8,48 @@ description: Plan a task as a sequence of small, single-responsibility PRs, each
 A plan is a sequence of PRs, not a design document. State the outcome you want,
 not the solution you have already decided on. Let the steps discover the
 solution.
+
+## How to plan
+
+Think in this order. Do not skip a step, and do not start a later step before
+the one above it is done.
+
+1. **Research the existing behavior.** Read the code around the request: the
+   entry points a user hits, the data it reads and writes, the paths it takes
+   today. Read until you know what the system does now, not what it probably
+   does.
+2. **Draw the map of today.** Sketch how the behavior works now, as boxes and
+   arrows in plain words: who acts, what happens, where the data goes. No code
+   details — no file, class, or function names. If you cannot draw it, you have
+   not read enough. Go back to step 1.
+3. **Update the map with the request.** Redraw the same map as it must be when
+   the request is done. Mark every box and arrow that is new, changed, or
+   removed. Everything unmarked stays as it is.
+4. **Plan from the marks.** Each marked part is a piece of work. Group the marks
+   into PRs, order them, and write each PR as the rest of this skill describes.
+   A PR that touches no mark is out of scope. A mark that no PR covers is a
+   gap.
+
+Task: CSV export, next to an existing PDF export.
+
+Today:
+
+```
+user → orders page → [Export PDF] → export route → reads order rows → PDF file → download
+```
+
+Requested:
+
+```
+user → orders page → [Export PDF] → export route → reads order rows → PDF file → download
+                   → [Export CSV]* → export route (format choice)* → reads order rows → CSV file* → download
+```
+
+Three marks: the CSV button, the format choice on the route, and the CSV
+file. The order rows and the download stay untouched. The plan covers the three
+marks and nothing else.
+
+The maps are your thinking, not the plan. They do not go into the plan output.
 
 ## Not optional
 
@@ -267,6 +309,8 @@ assumption about how the codebase probably works. Evidence is what separates
 
 ## Before you finish
 
+- Did you draw the map of today and the requested map, and does every mark
+  belong to a PR?
 - Does every step ship something true in production, not just true in the
   repo?
 - Can you stop after any step and leave production working?
@@ -281,5 +325,5 @@ assumption about how the codebase probably works. Evidence is what separates
 - Does the plan contain any unresolved "decide: X" or open question? If so,
   ask in the terminal and resolve it before the plan is done.
 
-Six "yes" and one "no unsplit step" and one "no unresolved question" and the
+Seven "yes" and one "no unsplit step" and one "no unresolved question" and the
 plan is ready.
