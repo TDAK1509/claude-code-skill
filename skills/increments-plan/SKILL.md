@@ -137,11 +137,45 @@ Rules for the list:
 - Name what changes: a page, a file, a status code, a row in a table, a log
   line.
 - Cover the failure the change is about, not only the happy path.
+- Possible in the real app. Every page, button, label, and message must exist
+  in the code today, or this PR adds it. See "Every step must be possible in
+  the real app" below.
 
 When a step is invisible by design — a flag-guarded path, a new column nothing
 reads yet — the outcome is the flag or the query, not the feature. "Set
 `NEW_EXPORT=1`. Open the export page. It shows the same rows as today." An
 invisible step still has a way to check it, or it is not a step.
+
+### Every step must be possible in the real app
+
+An outcome is a manual test, so a real person must be able to perform every
+bullet in the app as it is. Do not imagine the app. Check it.
+
+Before you write a bullet, find in the code where that action exists today, or
+where this PR adds it:
+
+- The page: find its route. Do not name a page that has no route.
+- The button, link, menu, or field: find it on that page. Use its real label.
+- The way the user gets there: find the navigation that leads to the page. Do
+  not assume a link that is not there.
+- The data the step needs: say how it exists — the user creates it in an
+  earlier bullet, or it already exists in the environment. Do not assume a
+  seed, an admin tool, or a test account that is not there.
+- The result: find where it shows — the message text, the list, the file, the
+  status code. Use the real text.
+
+Imagined, not possible:
+
+- "Open Settings → Billing → Export invoices." The app has no Billing tab under
+  Settings, and nothing exports invoices.
+- "Log in as an admin and open the admin panel." No admin panel exists.
+- "Trigger a payment failure." No user can make a payment fail from the app.
+
+When a step has no way to be performed through the app — a background job, a
+webhook, a failure no user can cause — do not invent a user action for it. Name
+the real tool someone uses to cause it, such as a command, a request to an
+endpoint, or a log line to read. If no such tool exists, say so in the
+terminal. Do not write a step nobody can execute.
 
 ## Order steps so production never breaks
 
@@ -362,7 +396,7 @@ assumption about how the codebase probably works. Evidence is what separates
 - Does every step name the evidence its approach came from, or say plainly
   that none exists?
 - Does every step carry an outcome list someone can perform on the day it
-  merges?
+  merges, with every page, button, and message checked against the code?
 - Does every step explain its approach and list the tests it adds, in writing
   order, one case per test, without naming the code that will implement it?
 - Can a developer with zero context read every outcome and every test and know
