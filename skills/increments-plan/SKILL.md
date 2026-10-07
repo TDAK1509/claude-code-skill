@@ -9,6 +9,12 @@ A plan is a sequence of PRs, not a design document. State the outcome you want,
 not the solution you have already decided on. Let the steps discover the
 solution.
 
+The plan goes to a developer with zero context. They have not seen the ticket,
+this conversation, or the code you read. They only execute the plan. So the plan
+must be self-sufficient: every PR, every outcome, and every test must make sense
+to a reader who has nothing else. See "Write for a reader with zero context"
+below.
+
 ## How to plan
 
 Think in this order. Do not skip a step, and do not start a later step before
@@ -250,6 +256,43 @@ Rules for the list:
   PR.
 - If a step genuinely adds no test — a pure rename, a config move — say that
   and say why, instead of inventing one.
+- Readable with zero context. See "Write for a reader with zero context" below.
+
+### Write for a reader with zero context
+
+The developer who runs the plan knows nothing you know. Each test must stand on
+its own, read by someone who has never seen the ticket, the conversation, or the
+code.
+
+Not readable without context:
+
+> Given a `.pdf` upload that returns on a platform whose upload lands on return,
+> when it lands, then a check is queued for that run.
+
+What is "a platform whose upload lands on return"? What is "a check", and which
+"run"? The words come from a conversation the developer never saw.
+
+Readable without context:
+
+> Given a user who attaches a `.pdf` to a chat message in Slack, when the file
+> finishes uploading, then a virus scan job is created for that message.
+
+Rules:
+
+- Use plain words for every thing the test names. Say what it is, not what you
+  called it while you planned.
+- No private shorthand: no nicknames, no ticket terms, no "the bug", "the
+  flow", "the new path", "as discussed".
+- No references to other tests. "Same as above" and "same platform" force the
+  reader to piece the test together. Write each test in full, even when it
+  repeats words from the test above.
+- No references outside the plan. If a test depends on a fact from the ticket
+  or the code, write the fact into the test or the explanation.
+- Concrete values beat vague ones: "three orders", "a name with a comma",
+  "status `401`", not "some data", "bad input", "an error".
+
+Test it: read the test as if this plan were the only thing you had. If you must
+ask "which one?" or "what does that mean?", rewrite it.
 
 ### One case per test
 
@@ -258,20 +301,20 @@ an "or".
 
 Not one test:
 
-> Given a `.pdf`, `.pptx`, `.docx` or `.xlsx` upload that returns on a platform
-> whose upload lands on return, when it lands, then a check is queued for that
-> run.
+> Given a user who attaches a `.pdf`, `.pptx`, `.docx` or `.xlsx` to a chat
+> message in Slack, when the file finishes uploading, then a virus scan job is
+> created for that message.
 
 That is four tests, one per file type:
 
-1. Given a `.pdf` upload that returns on a platform whose upload lands on
-   return, when it lands, then a check is queued for that run.
-2. Given a `.pptx` upload, same platform and same landing, then a check is
-   queued for that run.
-3. Given a `.docx` upload, same platform and same landing, then a check is
-   queued for that run.
-4. Given a `.xlsx` upload, same platform and same landing, then a check is
-   queued for that run.
+1. Given a user who attaches a `.pdf` to a chat message in Slack, when the file
+   finishes uploading, then a virus scan job is created for that message.
+2. Given a user who attaches a `.pptx` to a chat message in Slack, when the file
+   finishes uploading, then a virus scan job is created for that message.
+3. Given a user who attaches a `.docx` to a chat message in Slack, when the file
+   finishes uploading, then a virus scan job is created for that message.
+4. Given a user who attaches a `.xlsx` to a chat message in Slack, when the file
+   finishes uploading, then a virus scan job is created for that message.
 
 Each one fails on its own, so each one gets its own loop and its own commit. An
 "or" in a scenario hides which case is broken when the test goes red.
@@ -322,8 +365,10 @@ assumption about how the codebase probably works. Evidence is what separates
   merges?
 - Does every step explain its approach and list the tests it adds, in writing
   order, one case per test, without naming the code that will implement it?
+- Can a developer with zero context read every outcome and every test and know
+  what to do, without the ticket, this conversation, or a "same as above"?
 - Does the plan contain any unresolved "decide: X" or open question? If so,
   ask in the terminal and resolve it before the plan is done.
 
-Seven "yes" and one "no unsplit step" and one "no unresolved question" and the
+Eight "yes" and one "no unsplit step" and one "no unresolved question" and the
 plan is ready.
