@@ -243,43 +243,61 @@ implementation order, and it must be correct: each test has to be writable and
 passable with only the tests above it in place. A test that needs a later test's
 code sits in the wrong place — move it down.
 
-One line per test, as a scenario: given X, do Y, expect Z.
+Each test has a heading line and three bullets:
+
+```
+1. <Side> (<test type>): <goal of the test in one sentence>
+
+   - Setup: <the state that exists before the test runs>
+   - Input: <the one action or request the test makes>
+   - Expected: <the one result the test checks>
+```
+
+- **Side** is `Backend` or `Frontend`.
+- **Test type** is `unit`, `integration`, or `e2e`.
+- **Goal** says in one sentence what the test proves.
 
 Task: CSV export.
 
-1. Given an account with three orders, when the export runs, then the file holds
-   a header row and three rows.
-2. Given an account with no orders, when the export runs, then the file holds the
-   header row and nothing else.
-3. Given an order whose customer name holds a comma, when the export runs, then
-   the name stays in one column.
-4. Given a signed-out visitor, when the export URL is requested, then the
-   response is `401` and no file is produced.
+1. Backend (integration): The export holds one row per order.
 
-Four tests, four loops, four commits. The PR is done when every test in the list
+   - Setup: An account with three orders.
+   - Input: Run the export for that account.
+   - Expected: The file holds a header row and three rows.
+
+2. Backend (integration): The export of an empty account holds only the header.
+
+   - Setup: An account with no orders.
+   - Input: Run the export for that account.
+   - Expected: The file holds the header row and nothing else.
+
+3. Backend (unit): A comma in a value does not split the column.
+
+   - Setup: An order whose customer name is `Smith, Jane`.
+   - Input: Format that order as a CSV row.
+   - Expected: `Smith, Jane` stays in one column.
+
+4. Backend (integration): A signed-out visitor cannot export.
+
+   - Setup: No signed-in user.
+   - Input: Request the export URL.
+   - Expected: The response is `401`.
+
+5. Frontend (e2e): The Export button downloads the file.
+
+   - Setup: A signed-in user with three orders, on the orders page.
+   - Input: Click Export.
+   - Expected: The browser downloads a `.csv` file.
+
+Five tests, five loops, five commits. The PR is done when every test in the list
 is green and committed.
-
-When a PR touches both sides, prefix every test with `Backend:` or `Frontend:`,
-so the split is visible in the list:
-
-1. Backend: given an account with three orders, when the export endpoint is
-   called, then the response holds a header row and three rows.
-2. Backend: given a signed-out visitor, when the export endpoint is called, then
-   the response is `401`.
-3. Frontend: given the orders page, when Export is clicked, then the browser
-   downloads the returned file.
-4. Frontend: given the export endpoint returns `401`, when Export is clicked,
-   then the page shows a sign-in prompt.
-
-Skip the prefix when the whole PR is backend only or frontend only. The CSV
-export list above carries none, because that PR is backend only.
 
 Rules for the list:
 
-- One scenario per line, in the given/do/expect shape.
-- Prefix each test with `Backend:` or `Frontend:` when the PR touches both
-  sides. Skip the prefix when the PR touches one side only.
-- No "or" in a scenario. See "One case per test" below.
+- Every test uses the heading line and the three bullets: Setup, Input,
+  Expected.
+- Every heading names the side and the test type.
+- One action in Input. One result in Expected. See "One case per test" below.
 - In writing order. Each test depends only on the ones above it.
 - Name the condition that makes the case different — an empty list, a comma in
   the data, a missing permission — not just "the happy case" and "the error
@@ -300,16 +318,26 @@ code.
 
 Not readable without context:
 
-> Given a `.pdf` upload that returns on a platform whose upload lands on return,
-> when it lands, then a check is queued for that run.
+```
+1. Backend (integration): A check is queued when the upload lands.
+
+   - Setup: A `.pdf` upload that returns on a platform whose upload lands on return.
+   - Input: The upload lands.
+   - Expected: A check is queued for that run.
+```
 
 What is "a platform whose upload lands on return"? What is "a check", and which
 "run"? The words come from a conversation the developer never saw.
 
 Readable without context:
 
-> Given a user who attaches a `.pdf` to a chat message in Slack, when the file
-> finishes uploading, then a virus scan job is created for that message.
+```
+1. Backend (integration): An uploaded file gets a virus scan.
+
+   - Setup: A user attaches a `.pdf` to a chat message in Slack.
+   - Input: The file finishes uploading.
+   - Expected: A virus scan job is created for that message.
+```
 
 Rules:
 
@@ -330,31 +358,55 @@ ask "which one?" or "what does that mean?", rewrite it.
 
 ### One case per test
 
-A scenario that lists alternatives is not one test. It is several, hiding behind
-an "or".
+A test checks one case. An "or" or an "and" in Setup, Input, or Expected hides
+several tests in one.
 
-Not one test:
+Not one test — an "or" in Setup:
 
-> Given a user who attaches a `.pdf`, `.pptx`, `.docx` or `.xlsx` to a chat
-> message in Slack, when the file finishes uploading, then a virus scan job is
-> created for that message.
+```
+1. Backend (integration): An uploaded file gets a virus scan.
 
-That is four tests, one per file type:
+   - Setup: A user attaches a `.pdf`, `.pptx`, `.docx` or `.xlsx` to a chat message in Slack.
+   - Input: The file finishes uploading.
+   - Expected: A virus scan job is created for that message.
+```
 
-1. Given a user who attaches a `.pdf` to a chat message in Slack, when the file
-   finishes uploading, then a virus scan job is created for that message.
-2. Given a user who attaches a `.pptx` to a chat message in Slack, when the file
-   finishes uploading, then a virus scan job is created for that message.
-3. Given a user who attaches a `.docx` to a chat message in Slack, when the file
-   finishes uploading, then a virus scan job is created for that message.
-4. Given a user who attaches a `.xlsx` to a chat message in Slack, when the file
-   finishes uploading, then a virus scan job is created for that message.
+That is four tests, one per file type: `.pdf`, `.pptx`, `.docx`, `.xlsx`. Write
+each one in full.
 
-Each one fails on its own, so each one gets its own loop and its own commit. An
-"or" in a scenario hides which case is broken when the test goes red.
+Not one test — too many "and" in the input and the expected result:
 
-The same holds for a list of status codes, a list of roles, a list of
-environments, or any other "A, B or C" in the given or the expect.
+```
+7. Backend: given the Monthly Client Report folder, when the registry loads,
+   then it runs on days 3 to 7 of each month at 08:00, needs any one of Google
+   Ads, Meta Ads, LinkedIn Ads, Google Analytics and Google Search Console
+   connected by anyone the person can see, is checked before turning on, needs
+   no workspace admin, and is not an auto-enrollment candidate.
+```
+
+That one sentence checks six facts. When it goes red, nobody knows which fact
+broke. Split it, one test per fact:
+
+```
+7. Backend (unit): The Monthly Client Report runs on days 3 to 7 of each month.
+
+   - Setup: The Monthly Client Report folder exists.
+   - Input: Load the report registry.
+   - Expected: The report schedule covers days 3 to 7 of each month.
+
+8. Backend (unit): The Monthly Client Report runs at 08:00.
+
+   - Setup: The Monthly Client Report folder exists.
+   - Input: Load the report registry.
+   - Expected: The report run time is 08:00.
+```
+
+Then one test each for the required connection, the check before turning on,
+the workspace admin, and auto-enrollment. Each fails on its own, so each gets
+its own loop and its own commit.
+
+The same holds for a list of file types, status codes, roles, environments, or
+any other "A, B and C" in a test.
 
 ### Neither part holds code
 
@@ -398,7 +450,8 @@ assumption about how the codebase probably works. Evidence is what separates
 - Does every step carry an outcome list someone can perform on the day it
   merges, with every page, button, and message checked against the code?
 - Does every step explain its approach and list the tests it adds, in writing
-  order, one case per test, without naming the code that will implement it?
+  order, one case per test, each with a side, a test type, Setup, Input, and
+  Expected, without naming the code that will implement it?
 - Can a developer with zero context read every outcome and every test and know
   what to do, without the ticket, this conversation, or a "same as above"?
 - Does the plan contain any unresolved "decide: X" or open question? If so,
