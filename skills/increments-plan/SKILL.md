@@ -198,9 +198,9 @@ For each PR, state:
 1. **Outcome** — the definition of done as a short list of steps, each one an
    action and the result it produces. See "The outcome is a test someone can
    run" above.
-2. **Solution** — the approach in two or three sentences, then the tests this
-   PR adds, in the order they get written. Each test is one `tdd` loop. See
-   "The solution" below.
+2. **Solution** — the changes as short, direct bullets, then the tests this PR
+   adds, in the order they get written. Each test is one `tdd` loop. See "The
+   solution" below.
 3. **Revert cost** — what reverting this PR alone does to production: nothing,
    or name the one thing.
 4. **Evidence** — the file, function, or existing pattern you read that this
@@ -211,17 +211,42 @@ For each PR, state:
 
 ## The solution
 
-Two parts: a brief explanation, then the tests in order. Neither holds code.
+Two parts: the changes, then the tests in order.
 
-### The explanation
+### The changes
 
-Two or three sentences in plain terms. What changes, why this way and not
-another, and what stays untouched. A reader who has not opened the repository
-must be able to follow it.
+Short, direct bullets. One change per bullet. No essay, no "may", no "might",
+no "could". Each change takes one of three shapes.
 
-"CSV export rides on the route that already serves PDF export, because both read
-the same order rows. Only the response format differs. Leave the download UI
-alone — a later PR wires it up."
+**Copy from an existing pattern.** Name the files to copy, then list what the
+copy must do differently to reach the outcome. Use bullets, or a short code
+snippet of what it should look like.
+
+```
+- Copy from the PDF export route in `app/exports/pdf_route.py`.
+- Changes for the copy:
+  - Serve `text/csv` instead of `application/pdf`.
+  - One row per order, header row first: `id,date,customer,total`.
+```
+
+**Edit existing code.** Name the file, then show it before and after.
+
+```
+- Edit `app/exports/formats.py`:
+  - Before: `FORMATS = ["pdf"]`
+  - After: `FORMATS = ["pdf", "csv"]`
+```
+
+**New code.** Say plainly that it is new. Nothing like it exists in the repo
+yet, so the developer has no pattern to follow.
+
+```
+- New: an API endpoint `GET /orders/export.csv` that returns the signed-in
+  user's orders as CSV.
+- New: a service that turns a list of orders into CSV text.
+```
+
+Bad examples: [Solution written as an essay](references/bad-examples.md#solution-written-as-an-essay).
 
 ### The tests, in order
 
@@ -329,7 +354,7 @@ Rules:
   reader to piece the test together. Write each test in full, even when it
   repeats words from the test above.
 - No references outside the plan. If a test depends on a fact from the ticket
-  or the code, write the fact into the test or the explanation.
+  or the code, write the fact into the test or the changes.
 - Concrete values beat vague ones: "three orders", "a name with a comma",
   "status `401`", not "some data", "bad input", "an error".
 
@@ -349,17 +374,6 @@ roles, environments, or any other "A, B and C" in a test.
 
 Bad examples: [Test with an "or"](references/bad-examples.md#test-with-an-or),
 [Test with too many "and"](references/bad-examples.md#test-with-too-many-and).
-
-### Neither part holds code
-
-Both parts answer none of these: which classes exist, what the functions are
-called, what the signatures are, which pattern the code follows. The coding
-agent decides all of that once it has read the code.
-
-Bad examples: [Solution that holds code](references/bad-examples.md#solution-that-holds-code).
-
-Do not write implementation detail beyond what the outcome and this solution
-require.
 
 ## Unclear points go to the terminal, not the plan
 
@@ -390,13 +404,14 @@ assumption about how the codebase probably works. Evidence is what separates
   that none exists?
 - Does every step carry an outcome list someone can perform on the day it
   merges, with every page, button, and message checked against the code?
-- Does every step explain its approach and list the tests it adds, in writing
-  order, one case per test, each with a side, a test type, Setup, Input, and
-  Expected, without naming the code that will implement it?
+- Does every step list its changes as direct bullets — copy from a pattern,
+  before and after, or marked new — with no essay and no "may"?
+- Does every step list the tests it adds, in writing order, one case per test,
+  each with a side, a test type, Setup, Input, and Expected, and no code?
 - Can a developer with zero context read every outcome and every test and know
   what to do, without the ticket, this conversation, or a "same as above"?
 - Does the plan contain any unresolved "decide: X" or open question? If so,
   ask in the terminal and resolve it before the plan is done.
 
-Eight "yes" and one "no unsplit step" and one "no unresolved question" and the
+Nine "yes" and one "no unsplit step" and one "no unresolved question" and the
 plan is ready.

@@ -109,15 +109,59 @@ Fix: one test per fact.
 Then one test each for the required connection, the check before turning on,
 the workspace admin, and auto-enrollment.
 
-## Solution that holds code
+## Solution written as an essay
 
-> Add an `ExportService` with a `CsvFormatter` strategy and a `formatRow()`
-> helper.
+```
+A built-in automation folder may schedule its runs on days of the month instead
+of weekdays. The row runs at the folder's time on those days in its own time
+zone, which the scheduler already uses, so no day shift is needed. The new
+folder carries the report rules in its `AUTOMATION.md` body, because a run
+cannot read other files in the folder: only `references/worked-example.md` is
+added to every run's instructions, and `references/setup.md` is the guide that
+the existing chat setup tool returns. Settings are declared in the folder, so
+no Python settings handler is added.
 
-That is code, and the code has not been read yet. The coding agent picks the
-classes, functions, and patterns.
+A folder may also ask Patricia to remember which report pages were posted. When
+a run of such a folder ends as completed and its final reply reached the chat
+with a platform message id, Patricia records the file names of the HTML pages
+that the run handed a link for, by saving the page or by asking for its file
+link, and that the delivered reply links. A page that an earlier run saved and
+this run posted counts too. The newest 200 names are kept on the row next to
+the settings. They survive every settings save, are never shown on the
+dashboard, and are listed in the next run's instructions under "Pages already
+posted", fenced with the tag `automation_posted_pages`. That list lets a run
+tell a client already posted apart from a page saved but never posted. It
+needs no new chat tool: the native tool list has 109 characters left under its
+size limit (measured on `main` at `7e2dedbab0`).
+```
 
-Fix: say what changes, why this way, and what stays untouched.
+Written as an essay, not direct. Long sentences hide each change inside
+reasons and side notes. Weak words like "may" leave the developer to guess
+whether a thing must happen.
 
-> CSV export rides on the route that already serves PDF export, because both
-> read the same order rows. Only the response format differs.
+Fix: short, direct bullets, one change each, in one of three shapes.
+
+Copy from an existing pattern:
+
+```
+- Copy from the PDF export route in `app/exports/pdf_route.py`.
+- Changes for the copy:
+  - Serve `text/csv` instead of `application/pdf`.
+  - One row per order, header row first: `id,date,customer,total`.
+```
+
+Edit existing code:
+
+```
+- Edit `app/exports/formats.py`:
+  - Before: `FORMATS = ["pdf"]`
+  - After: `FORMATS = ["pdf", "csv"]`
+```
+
+New code, marked as new:
+
+```
+- New: an API endpoint `GET /orders/export.csv` that returns the signed-in
+  user's orders as CSV.
+- New: a service that turns a list of orders into CSV text.
+```
