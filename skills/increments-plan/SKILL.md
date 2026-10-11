@@ -69,8 +69,8 @@ Write one sentence: what should be true when this is done. Not how it will be
 built.
 
 - "Users can export their data as CSV" is an outcome.
-- "Add an `ExportService` with a `CsvFormatter` strategy" is a solution you
-  have not tested yet. Do not write this in the plan.
+
+Bad examples: [Solution instead of outcome](references/bad-examples.md#solution-instead-of-outcome).
 
 A detailed upfront design is a guess about code you have not changed yet. The
 PRs are how you find out if the guess holds. If step 2 reveals step 4 was
@@ -119,12 +119,7 @@ Task: a rate limiter on the send endpoint.
 - Send an eleventh in the same minute. It returns `429`.
 - Wait a minute. The next request returns `200`.
 
-These are not outcomes:
-
-- "The tests pass." Which test, and what does it prove.
-- "The code compiles." That is not an outcome.
-- "`ExportService` is added." That is the solution, not the effect.
-- "Export works end to end." Nobody can perform that sentence.
+Bad examples: [Outcomes nobody can perform](references/bad-examples.md#outcomes-nobody-can-perform).
 
 Rules for the list:
 
@@ -164,12 +159,7 @@ where this PR adds it:
 - The result: find where it shows — the message text, the list, the file, the
   status code. Use the real text.
 
-Imagined, not possible:
-
-- "Open Settings → Billing → Export invoices." The app has no Billing tab under
-  Settings, and nothing exports invoices.
-- "Log in as an admin and open the admin panel." No admin panel exists.
-- "Trigger a payment failure." No user can make a payment fail from the app.
+Bad examples: [Steps from an imagined app](references/bad-examples.md#steps-from-an-imagined-app).
 
 When a step has no way to be performed through the app — a background job, a
 webhook, a failure no user can cause — do not invent a user action for it. Name
@@ -199,6 +189,9 @@ terminal. Do not write a step nobody can execute.
   it exists, not its size in lines.
 
 ## Write the plan
+
+Read [references/bad-examples.md](references/bad-examples.md) before you write
+the plan. It shows the mistakes plans make most often, and how to fix each one.
 
 For each PR, state:
 
@@ -316,19 +309,6 @@ The developer who runs the plan knows nothing you know. Each test must stand on
 its own, read by someone who has never seen the ticket, the conversation, or the
 code.
 
-Not readable without context:
-
-```
-1. Backend (integration): A check is queued when the upload lands.
-
-   - Setup: A `.pdf` upload that returns on a platform whose upload lands on return.
-   - Input: The upload lands.
-   - Expected: A check is queued for that run.
-```
-
-What is "a platform whose upload lands on return"? What is "a check", and which
-"run"? The words come from a conversation the developer never saw.
-
 Readable without context:
 
 ```
@@ -356,57 +336,19 @@ Rules:
 Test it: read the test as if this plan were the only thing you had. If you must
 ask "which one?" or "what does that mean?", rewrite it.
 
+Bad examples: [Test that needs context](references/bad-examples.md#test-that-needs-context).
+
 ### One case per test
 
 A test checks one case. An "or" or an "and" in Setup, Input, or Expected hides
-several tests in one.
+several tests in one. When that test goes red, nobody knows which case broke.
 
-Not one test — an "or" in Setup:
+Split it, one test per case. Each one fails on its own, so each gets its own
+loop and its own commit. The same holds for a list of file types, status codes,
+roles, environments, or any other "A, B and C" in a test.
 
-```
-1. Backend (integration): An uploaded file gets a virus scan.
-
-   - Setup: A user attaches a `.pdf`, `.pptx`, `.docx` or `.xlsx` to a chat message in Slack.
-   - Input: The file finishes uploading.
-   - Expected: A virus scan job is created for that message.
-```
-
-That is four tests, one per file type: `.pdf`, `.pptx`, `.docx`, `.xlsx`. Write
-each one in full.
-
-Not one test — too many "and" in the input and the expected result:
-
-```
-7. Backend: given the Monthly Client Report folder, when the registry loads,
-   then it runs on days 3 to 7 of each month at 08:00, needs any one of Google
-   Ads, Meta Ads, LinkedIn Ads, Google Analytics and Google Search Console
-   connected by anyone the person can see, is checked before turning on, needs
-   no workspace admin, and is not an auto-enrollment candidate.
-```
-
-That one sentence checks six facts. When it goes red, nobody knows which fact
-broke. Split it, one test per fact:
-
-```
-7. Backend (unit): The Monthly Client Report runs on days 3 to 7 of each month.
-
-   - Setup: The Monthly Client Report folder exists.
-   - Input: Load the report registry.
-   - Expected: The report schedule covers days 3 to 7 of each month.
-
-8. Backend (unit): The Monthly Client Report runs at 08:00.
-
-   - Setup: The Monthly Client Report folder exists.
-   - Input: Load the report registry.
-   - Expected: The report run time is 08:00.
-```
-
-Then one test each for the required connection, the check before turning on,
-the workspace admin, and auto-enrollment. Each fails on its own, so each gets
-its own loop and its own commit.
-
-The same holds for a list of file types, status codes, roles, environments, or
-any other "A, B and C" in a test.
+Bad examples: [Test with an "or"](references/bad-examples.md#test-with-an-or),
+[Test with too many "and"](references/bad-examples.md#test-with-too-many-and).
 
 ### Neither part holds code
 
@@ -414,8 +356,7 @@ Both parts answer none of these: which classes exist, what the functions are
 called, what the signatures are, which pattern the code follows. The coding
 agent decides all of that once it has read the code.
 
-- Not a solution: "Add an `ExportService` with a `CsvFormatter` strategy and a
-  `formatRow()` helper." That is code, and the code has not been read yet.
+Bad examples: [Solution that holds code](references/bad-examples.md#solution-that-holds-code).
 
 Do not write implementation detail beyond what the outcome and this solution
 require.
