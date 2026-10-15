@@ -382,6 +382,41 @@ you do not have — a design choice, a scope call, an ambiguous requirement —
 stop and ask in the terminal before writing that step. Do not write
 "decide: X", a question, or an open item into the plan itself.
 
+The person deciding has not read the code you read. Give them the full context
+in the terminal, so they can decide without opening the repository. For each
+decision, report:
+
+- **Issue** — what the problem is, in plain words.
+- **Cause** — why it happens. Name the code, the ticket line, or the fact behind
+  it.
+- **Fix** — what the plan does once the decision is made.
+- **Why a decision** — why you cannot pick on your own: a business rule, a
+  scope call, a trade-off only they can weigh.
+- **Options** — each option with its pros and cons, and what changes in the
+  plan if they pick it.
+
+```
+Decision 1: What happens to old reports when a folder moves to monthly runs
+
+- Issue: A folder that runs weekly has 40 past reports. Monthly runs post a
+  new kind of report.
+- Cause: Past reports carry no schedule type. The dashboard lists them all
+  together (`app/dashboard/reports.py:88`).
+- Fix: The plan adds a schedule type to every new report.
+- Why a decision: Only you know whether clients expect to see the weekly
+  reports after the change.
+- Options:
+  - A. Keep old reports in the list.
+    Pro: no report disappears. Con: the list mixes weekly and monthly reports.
+  - B. Hide old reports.
+    Pro: a clean monthly list. Con: clients lose access to past reports in
+    the dashboard. Adds one PR to hide them.
+```
+
+A bare question such as "keep or hide old reports?" is not enough. Without the
+issue, the cause, and the trade-off, the person must research the code before
+they can answer.
+
 Once the answer comes back, write the step as decided. If the ticket is too
 ambiguous to plan safely even after asking, say so in the terminal instead of
 producing a plan full of placeholders.
