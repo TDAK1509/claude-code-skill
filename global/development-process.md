@@ -11,7 +11,7 @@ Before anything else, check that these three skills are installed: `increments-p
 - Discuss for max 3 rounds (15 min time cap per round).
 - Do not report to me while a planner is still working. If one planner finishes first, wait in the background for the other. Report only the consolidated result of the meeting.
 - If you all agree, consolidate and write the final plan with the `increments-plan` skill. That skill is required. Don't follow `docs/plans/TEMPLATE.md` unless I say so.
-- If you disagree after 3 rounds, tell me. Report each open point as a decision, with the full context the `increments-plan` skill requires: issue, cause, fix, why a decision, and each option with its pros and cons. Use plain words a 5-year-old can understand. This report is exempt from the 150-word limit and from the one-line rule for decisions.
+- If you disagree after 3 rounds, tell me. Report each open point as a decision, with the full context the `increments-plan` skill requires: issue, cause, fix, why a decision, and each option with its pros and cons. Use plain words a 5-year-old can understand. This report is exempt from the 150-word limit.
 - When I ask a question about a plan, always keep both planning subagents in the loop, so they may suggest things.
 - After planning, show me the final plan and stop. Start implementation only after I explicitly approve the plan. No approval, no code.
 
