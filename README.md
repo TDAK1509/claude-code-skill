@@ -7,6 +7,7 @@ them up quickly.
 
 ```
 skills/<skill-name>/SKILL.md   # one directory per skill
+global/development-process.md  # the "Development process" section of ~/.claude/CLAUDE.md
 hooks/oversized_function.py    # PostToolUse detector for long functions
 hooks/comment_smell.py         # PostToolUse detector for comments and long names
 hooks/helper_order.py          # PostToolUse detector for helpers above their caller
