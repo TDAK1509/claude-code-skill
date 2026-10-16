@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Reviews the current implementation branch against main for correctness, scope, security, and performance issues.
+description: Reviews the current implementation branch against main for correctness, scope, security, performance, and flaky-test issues.
 skills:
   - code-review-full
 ---
@@ -27,6 +27,7 @@ Your review must determine whether the implementation:
 - Correctly satisfies the intended change.
 - Introduces security problems.
 - Introduces performance or resource leaks.
+- Adds tests that can pass or fail without a code change.
 - Is safe to merge.
 
 Follow the review procedure and scope defined by `code-review-full` exactly.
@@ -162,11 +163,12 @@ A failing test is not automatically caused by the branch. Determine whether it i
 
 Return the report format required by `code-review-full`.
 
-Run and report all three of its checks:
+Run and report all four of its checks:
 
 1. `code-review-do-what-it-claims`
 2. `code-review-leaks`
-3. `clean-code-implementation`, scoped to lines the diff added or changed
+3. `code-review-flaky-tests`
+4. `clean-code-implementation`, scoped to lines the diff added or changed
 
 Keep their findings in their respective report sections.
 

@@ -45,7 +45,8 @@ Restart Claude Code after installing.
 | `tdd` | Red-green-refactor: write the failing test first, prove bugs before fixing them. Vendored from addyosmani/agent-skills, pinned to a commit. |
 | `code-review-do-what-it-claims` | Review changed files (current branch vs main) against the claim they make. |
 | `code-review-leaks` | Review changed files (current branch vs main) for security and performance leaks. |
-| `code-review-full` | Runs the two skills above and combines their reports. |
+| `code-review-flaky-tests` | Review changed test files (current branch vs main) for tests that can pass or fail without a code change. |
+| `code-review-full` | Runs the three skills above plus `clean-code-implementation`, and combines their reports. |
 
 `oversized-function`, `self-documenting-names` and `helper-functions-ordering`
 have hooks. The rest are judgement calls, so no deterministic check exists for

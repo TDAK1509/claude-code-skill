@@ -156,6 +156,10 @@ Use the most appropriate existing test layer.
 
 Tests should verify behavior rather than internal implementation details.
 
+Tests must be deterministic: same code, same result, on every run. Freeze time,
+seed randomness, wait for conditions instead of fixed sleeps, clean up shared
+state, and stub the network. Review checks this with `code-review-flaky-tests`.
+
 Also verify that existing behavior affected by the change continues working.
 
 Do not claim something is tested unless you actually ran the relevant test or validation command.

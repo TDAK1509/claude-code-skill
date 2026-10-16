@@ -2,7 +2,7 @@
 
 Use this process only when I ask for it. I ask by name, for example "follow the development process" or "use the dev process". Without that, ignore this whole section and work normally.
 
-Before anything else, check that these three skills are installed: `increments-plan`, `clean-code-implementation` and `code-review-full`. If any one is missing, abort early and tell me which.
+Before anything else, check that these four skills are installed: `increments-plan`, `clean-code-implementation`, `code-review-full` and `code-review-flaky-tests`. If any one is missing, abort early and tell me which.
 
 ### 1. Plan
 
@@ -27,8 +27,8 @@ The developer subagent must follow the `tdd` skill. It works the plan's test lis
 
 After implementation:
 
-- Review the code with the `code-review-full` skill. It runs three checks: `code-review-do-what-it-claims`, `code-review-leaks` and `clean-code-implementation`.
-- Start one subagent per check, in parallel. Each one loads only its own child skill and reviews only that category. Then collect all three reports.
+- Review the code with the `code-review-full` skill. It runs four checks: `code-review-do-what-it-claims`, `code-review-leaks`, `code-review-flaky-tests` and `clean-code-implementation`.
+- Start one subagent per check, in parallel. Each one loads only its own child skill and reviews only that category. Then collect all four reports.
 - One subagent running `code-review-full` alone is also fine for a small diff.
 - Don't use any other review skill (known case: `ship:review` — never use it unless asked).
 - Model preference: gpt-6.1-sol[1m] > opus. Only use those models. If none is available, abort.
