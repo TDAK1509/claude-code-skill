@@ -1,30 +1,31 @@
 ---
 name: code-review-flaky-tests
-description: Review the current branch's diff against main for tests that can pass or fail without a code change — only in the changed files. Use when the user asks to review a PR, review changes, check for flaky tests, or check that new tests are deterministic.
+description: Review the current branch's diff against main for tests that can pass or fail without a code change — only in the changed lines. Use when the user asks to review a PR, review changes, check for flaky tests, or check that new tests are deterministic.
 ---
 
 # Code review: flaky tests
 
-Compare the current branch against `main`. Examine only the changed files.
-Look for tests that can pass on one run and fail on the next with no code
-change. Not style, not coverage.
+Compare the current branch against `main`. Examine only the lines the diff
+added or changed. Legacy code in the same file is out of scope. Look for tests
+that can pass on one run and fail on the next with no code change. Not style,
+not coverage.
 
 ## Steps
 
-1. List changed files only:
+1. List the changed files:
    ```bash
    git diff --name-only main...HEAD
    ```
 2. Keep the test code from that list: test files, fixtures, factories, test
-   helpers, test setup and teardown, and test config. Do not scan files outside
-   this list.
-3. Read the full diff for those files:
+   helpers, test setup and teardown, and test config.
+3. Read the diff for those files:
    ```bash
    git diff main...HEAD -- <file> ...
    ```
-   Only lines the diff added or changed are in scope. Do not flag a
-   pre-existing flaky test the diff did not touch.
-4. Check each added or changed test for time and randomness:
+   Review only the `+` lines. Read the surrounding code only to understand a
+   changed line, never to find new problems. Do not flag a legacy flaky test
+   the diff did not touch, even in the same file.
+4. Check each added or changed line for time and randomness:
    - Reads the real clock (`now`, today's date, the current timezone) instead
      of a frozen or injected time. Breaks at midnight, month end, a DST change,
      or on a CI machine in another timezone.
@@ -32,7 +33,7 @@ change. Not style, not coverage.
    - Waits a fixed time (`sleep`, `setTimeout`, a hard-coded wait) instead of
      waiting for a condition.
    - Asserts a duration or timeout that a slow CI machine can miss.
-5. Check each added or changed test for order and shared state:
+5. Check each added or changed line for order and shared state:
    - Depends on another test running first, or on data another test leaves.
    - Changes global, module, class, or environment state and does not restore
      it. A mock, a spy, an env var, or a patched function that outlives the
@@ -42,7 +43,7 @@ change. Not style, not coverage.
      in parallel.
    - Asserts the order of a result that has no defined order: a query with no
      `ORDER BY`, a set, a map, a directory listing, parallel tasks.
-6. Check each added or changed test for concurrency and the outside world:
+6. Check each added or changed line for concurrency and the outside world:
    - Does not await an async call, a promise, or a background job before it
      asserts.
    - Races two tasks, threads, or requests with no synchronization.
