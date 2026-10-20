@@ -193,6 +193,30 @@ terminal. Do not write a step nobody can execute.
 Read [references/bad-examples.md](references/bad-examples.md) before you write
 the plan. It shows the mistakes plans make most often, and how to fix each one.
 
+Start the plan with a section called **The mindset of this plan**, before the
+first PR. It is the compass for every decision the plan does not cover. The
+developer reads it when a review finding or a surprise in the code needs a
+call. They pick the option that reaches the goal, and drop the rest as out of
+scope. Write it in three parts:
+
+- **Goal** — one or two sentences: what must be true for the user when every
+  PR has merged.
+- **What matters most** — the two or three qualities the goal depends on, in
+  order. For example: "No report is lost", then "Clients see only their own
+  reports", then "Speed".
+- **Out of scope** — what this plan does not try to fix, even when it is close
+  by.
+
+```
+## The mindset of this plan
+
+- Goal: Users can download their orders as a CSV file from the orders page.
+- What matters most: 1. Every order is in the file. 2. Only the signed-in
+  user's orders. 3. The download starts in under 5 seconds for 10,000 orders.
+- Out of scope: Other export formats. Scheduled exports. Changes to the PDF
+  export.
+```
+
 For each PR, state:
 
 1. **Outcome** — the definition of done as a short list of steps, each one an
@@ -430,6 +454,8 @@ assumption about how the codebase probably works. Evidence is what separates
 
 - Did you draw the map of today and the requested map, and does every mark
   belong to a PR?
+- Does the plan start with "The mindset of this plan": the goal, what matters
+  most, and what is out of scope?
 - Does every step ship something true in production, not just true in the
   repo?
 - Can you stop after any step and leave production working?
@@ -448,5 +474,5 @@ assumption about how the codebase probably works. Evidence is what separates
 - Does the plan contain any unresolved "decide: X" or open question? If so,
   ask in the terminal and resolve it before the plan is done.
 
-Nine "yes" and one "no unsplit step" and one "no unresolved question" and the
+Ten "yes" and one "no unsplit step" and one "no unresolved question" and the
 plan is ready.

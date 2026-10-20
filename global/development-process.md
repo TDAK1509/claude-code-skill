@@ -10,7 +10,7 @@ Before anything else, check that these four skills are installed: `increments-pl
 - Then hold a meeting between two planning subagents, both at high effort: one on opus, one on gpt-6.1-sol[1m]. They discuss the solution for the ticket together. You chair the meeting and do not plan yourself.
 - Discuss for max 3 rounds (15 min time cap per round).
 - Do not report to me while a planner is still working. If one planner finishes first, wait in the background for the other. Report only the consolidated result of the meeting.
-- If you all agree, consolidate and write the final plan with the `increments-plan` skill. That skill is required. Don't follow `docs/plans/TEMPLATE.md` unless I say so.
+- If you all agree, consolidate and write the final plan with the `increments-plan` skill. The plan starts with "The mindset of this plan": the goal, what matters most, and what is out of scope. That skill is required. Don't follow `docs/plans/TEMPLATE.md` unless I say so.
 - If you disagree after 3 rounds, tell me. Report each open point as a decision, with the full context the `increments-plan` skill requires: issue, cause, fix, why a decision, and each option with its pros and cons. Use plain words a 5-year-old can understand. This report is exempt from the 150-word limit.
 - When I ask a question about a plan, always keep both planning subagents in the loop, so they may suggest things.
 - After planning, show me the full link of the plan's local path and stop. Start implementation only after I explicitly approve the plan. No approval, no code.
@@ -24,6 +24,8 @@ Send the plan to a developer subagent. It must use the `clean-code-implementatio
 Developer model preference, in this order: sonnet (high), opus (medium). Use the first one available. Only use those models. If none is available, abort loudly and tell me which ones you tried.
 
 The developer subagent must follow the `tdd` skill. It works the plan's test list in order. For every test it runs one loop: write the failing test, make it pass, refactor, then commit. One loop, one commit. It commits only when the suite is green, never on red. It does not batch several tests into one commit.
+
+When the developer needs a decision from me, during development or after a review, it first goes back to the plan's "The mindset of this plan". It asks which option reaches the goal. If one option clearly does, it takes it. It does not weigh out-of-scope concerns. It asks me only when the goal does not settle the decision.
 
 After implementation:
 

@@ -236,6 +236,11 @@ Report a blocker when:
 - A dependency expected by the plan does not exist.
 - Implementing the increment would break the independent/revertible PR boundary.
 
+Before you ask for a decision, go back to the plan's "The mindset of this plan"
+section. Read the goal, what matters most, and what is out of scope. Ask which
+option reaches that goal. If one option clearly does, take it and say so. Do not
+weigh out-of-scope concerns. Ask only when the goal does not settle it.
+
 Clearly explain:
 
 - What you discovered
