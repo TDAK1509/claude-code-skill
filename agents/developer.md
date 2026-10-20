@@ -160,6 +160,12 @@ Tests must be deterministic: same code, same result, on every run. Freeze time,
 seed randomness, wait for conditions instead of fixed sleeps, clean up shared
 state, and stub the network. Review checks this with `code-review-flaky-tests`.
 
+Flaky tests are not tolerated. When a test passes on one run and fails on
+another — locally or in CI — do not retry it, re-run the job, skip it, or mark
+it as allowed to fail. Find the cause and fix the test. A test that fails only
+in CI is flaky until proven otherwise. If the flaky test is not part of this
+increment, fix it in its own commit and name it in your report.
+
 Also verify that existing behavior affected by the change continues working.
 
 Do not claim something is tested unless you actually ran the relevant test or validation command.
