@@ -1,6 +1,6 @@
 ---
 name: increments-plan
-description: Plan a task as a sequence of small, single-responsibility PRs, each one a working, testable, revertible step toward an outcome. Every PR carries an outcome list — the steps someone runs to confirm it works — and its tests in the order they get written, one tdd loop each. It starts from a map of the existing behavior, updated with the request. Use when planning or scoping multi-step work, when a task looks too big for one PR, when the user asks for a phased or incremental plan, or when the user asks how to break work into pull requests.
+description: Plan a task as a sequence of small, single-responsibility PRs, each one a working, testable, revertible step toward an outcome. Every PR carries an outcome — a brief, then the steps someone runs to confirm it works — and its tests in the order they get written, one tdd loop each. It plans the proper, minimal fix, backwards from the final outcome, starting from a map of the existing behavior, updated with the request. Use when planning or scoping multi-step work, when a task looks too big for one PR, when the user asks for a phased or incremental plan, or when the user asks how to break work into pull requests.
 ---
 
 # Increments plan
@@ -14,6 +14,32 @@ this conversation, or the code you read. They only execute the plan. So the plan
 must be self-sufficient: every PR, every outcome, and every test must make sense
 to a reader who has nothing else. See "Write for a reader with zero context"
 below.
+
+## Fix it properly, keep it minimal
+
+Plan the proper fix for the problem, not a hack. A hack is a change that makes
+the symptom go away but leaves the cause in place: a special case for one
+customer, a retry around a bug, a flag that hides a broken path. Plan a hack
+only when the user asks for one.
+
+Do not overengineer either. No abstraction, option, or layer that the request
+does not need today. No cleanup the outcome does not need.
+
+The target is a maintainable codebase with the smallest change that fully
+reaches the outcome. When two plans both reach it, pick the one with less code,
+fewer PRs, and fewer tests.
+
+Think from the final outcome backwards:
+
+1. Start at the end: what must be true for the user when the last PR merges.
+2. Ask what the last PR needs in place to make that true. That is the PR before
+   it.
+3. Keep asking until you reach what exists today.
+4. Anything that does not lie on that path is out of scope.
+
+The tests follow the same rule. Each test proves one part of the outcome. Write
+the fewest tests that prove the whole outcome, and the least code that makes
+them pass. A test that proves nothing the outcome needs is extra effort.
 
 ## How to plan
 
@@ -31,8 +57,10 @@ the one above it is done.
 3. **Update the map with the request.** Redraw the same map as it must be when
    the request is done. Mark every box and arrow that is new, changed, or
    removed. Everything unmarked stays as it is.
-4. **Plan from the marks.** Each marked part is a piece of work. Group the marks
-   into PRs, order them, and write each PR as the rest of this skill describes.
+4. **Plan from the marks.** Each marked part is a piece of work. Start from the
+   requested map and work backwards to today's map, as "Fix it properly, keep
+   it minimal" above describes. Group the marks into PRs, order them, and write
+   each PR as the rest of this skill describes.
    A PR that touches no mark is out of scope. A mark that no PR covers is a
    gap.
 
@@ -82,7 +110,7 @@ For every PR in the plan, answer:
 
 - **What can a reviewer see work?** A passing test, a new path a user can hit,
   a flag they can flip, a script they can run. "Trust me, step 4 uses this" is
-  not an answer. Write the answer as the outcome list — see "The outcome is a
+  not an answer. Write the answer as the outcome steps — see "The outcome is a
   test someone can run" below.
 - **What breaks if this ships alone and nothing after it ever lands?** The
   answer must be "nothing in production." A half-built abstraction with no
@@ -92,10 +120,24 @@ For every PR in the plan, answer:
 
 ## The outcome is a test someone can run
 
-Every PR carries its outcome as a short list of steps. This is the definition of
-done. A PR without it is not planned, it is only described.
+Every PR carries its outcome in two parts. This is the definition of done. A PR
+without it is not planned, it is only described.
 
-Write it as a manual test. Each bullet is one action and the result it produces.
+1. **Brief** — one or two sentences: what this PR changes for the user, in
+   plain words. A reader knows what the PR is for before reading any step.
+2. **Steps** — a short list someone performs to check it, step by step.
+
+```
+Brief: Users can download their orders as a CSV file from the orders page.
+
+Steps:
+- Open the orders page.
+- Click Export.
+- A `.csv` file downloads.
+- The file holds a header row and one row per order.
+```
+
+Write the steps as a manual test. Each bullet is one action and the result it produces.
 Someone performs the list top to bottom, the day the PR merges.
 
 Task: email and password login.
@@ -219,9 +261,9 @@ scope. Write it in three parts:
 
 For each PR, state:
 
-1. **Outcome** — the definition of done as a short list of steps, each one an
-   action and the result it produces. See "The outcome is a test someone can
-   run" above.
+1. **Outcome** — the definition of done: a brief of one or two sentences, then
+   a short list of steps, each one an action and the result it produces. See
+   "The outcome is a test someone can run" above.
 2. **Solution** — the changes as short, direct bullets, then the tests this PR
    adds, in the order they get written. Each test is one `tdd` loop. See "The
    solution" below.
@@ -463,8 +505,10 @@ assumption about how the codebase probably works. Evidence is what separates
 - Is any step describable only with "and"? Split it.
 - Does every step name the evidence its approach came from, or say plainly
   that none exists?
-- Does every step carry an outcome list someone can perform on the day it
-  merges, with every page, button, and message checked against the code?
+- Does every step carry an outcome brief, and steps someone can perform on the
+  day it merges, with every page, button, and message checked against the code?
+- Is every PR the proper fix, not a hack, with nothing the outcome does not
+  need? Did you plan from the final outcome backwards?
 - Does every step list its changes as direct bullets — copy from a pattern,
   before and after, or marked new — with no essay and no "may"?
 - Does every step list the tests it adds, in writing order, one case per test,
@@ -474,5 +518,5 @@ assumption about how the codebase probably works. Evidence is what separates
 - Does the plan contain any unresolved "decide: X" or open question? If so,
   ask in the terminal and resolve it before the plan is done.
 
-Ten "yes" and one "no unsplit step" and one "no unresolved question" and the
+Eleven "yes" and one "no unsplit step" and one "no unresolved question" and the
 plan is ready.
