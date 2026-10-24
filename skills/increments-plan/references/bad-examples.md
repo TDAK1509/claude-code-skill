@@ -141,27 +141,49 @@ whether a thing must happen.
 
 Fix: short, direct bullets, one change each, in one of three shapes.
 
-Copy from an existing pattern:
+Follow an existing pattern:
+
+```
+- Follow the PDF export on the orders page.
+- Differences: the file is CSV, one row per order, with a header row.
+```
+
+Change existing behavior:
+
+```
+- Export formats
+  - Before: the orders page exports PDF only.
+  - After: the orders page exports PDF and CSV.
+```
+
+New behavior, marked as new:
+
+```
+- New: the signed-in user can download their own orders as CSV.
+```
+
+## Changes that dictate the code
 
 ```
 - Copy from the PDF export route in `app/exports/pdf_route.py`.
 - Changes for the copy:
   - Serve `text/csv` instead of `application/pdf`.
   - One row per order, header row first: `id,date,customer,total`.
-```
-
-Edit existing code:
-
-```
 - Edit `app/exports/formats.py`:
   - Before: `FORMATS = ["pdf"]`
   - After: `FORMATS = ["pdf", "csv"]`
+- New: an API endpoint `GET /orders/export.csv`.
+- New: a `CsvExportService` with a `format_rows()` method.
 ```
 
-New code, marked as new:
+The planner wrote the code before anyone opened the editor. Code snippets, a
+new endpoint path, and new class and method names steer the developer to the
+planner's guess. The developer has a coding skill and reads the code; let them
+pick the names and the shape.
+
+Fix: give the direction in behavior, and point to what already exists.
 
 ```
-- New: an API endpoint `GET /orders/export.csv` that returns the signed-in
-  user's orders as CSV.
-- New: a service that turns a list of orders into CSV text.
+- Follow the PDF export on the orders page.
+- Differences: the file is CSV, one row per order, with a header row.
 ```

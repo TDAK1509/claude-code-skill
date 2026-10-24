@@ -264,7 +264,7 @@ For each PR, state:
 1. **Outcome** — the definition of done: a brief of one or two sentences, then
    a short list of steps, each one an action and the result it produces. See
    "The outcome is a test someone can run" above.
-2. **Solution** — the changes as short, direct bullets, then the tests this PR
+2. **Solution** — the direction of the changes as short, direct bullets, then the tests this PR
    adds, in the order they get written. Each test is one `tdd` loop. See "The
    solution" below.
 3. **Revert cost** — what reverting this PR alone does to production: nothing,
@@ -281,38 +281,50 @@ Two parts: the changes, then the tests in order.
 
 ### The changes
 
+The changes give direction, not code. The developer builds the PR with their
+own coding skill and picks every name. Detail here biases them toward your
+guess, made before anyone wrote the code.
+
 Short, direct bullets. One change per bullet. No essay, no "may", no "might",
 no "could". Each change takes one of three shapes.
 
-**Copy from an existing pattern.** Name the files to copy, then list what the
-copy must do differently to reach the outcome. Use bullets, or a short code
-snippet of what it should look like.
+**Follow an existing pattern.** Point to the existing feature or file that
+already does something similar. Say what must behave differently.
 
 ```
-- Copy from the PDF export route in `app/exports/pdf_route.py`.
-- Changes for the copy:
-  - Serve `text/csv` instead of `application/pdf`.
-  - One row per order, header row first: `id,date,customer,total`.
+- Follow the PDF export on the orders page.
+- Differences: the file is CSV, one row per order, with a header row.
 ```
 
-**Edit existing code.** Name the file, then show it before and after.
+**Change existing behavior.** Say how it behaves before and after, in plain
+words.
 
 ```
-- Edit `app/exports/formats.py`:
-  - Before: `FORMATS = ["pdf"]`
-  - After: `FORMATS = ["pdf", "csv"]`
+- Export formats
+  - Before: the orders page exports PDF only.
+  - After: the orders page exports PDF and CSV.
 ```
 
-**New code.** Say plainly that it is new. Nothing like it exists in the repo
-yet, so the developer has no pattern to follow.
+**New behavior.** Say plainly that it is new. Nothing like it exists in the repo
+yet, so the developer has no pattern to follow. Say what it must do, not how it
+is built.
 
 ```
-- New: an API endpoint `GET /orders/export.csv` that returns the signed-in
-  user's orders as CSV.
-- New: a service that turns a list of orders into CSV text.
+- New: the signed-in user can download their own orders as CSV.
 ```
 
-Bad examples: [Solution written as an essay](references/bad-examples.md#solution-written-as-an-essay).
+Leave to the developer:
+
+- Names of new tables, columns, functions, classes, files, endpoints, and
+  flags.
+- Code snippets, signatures, and before/after code.
+- Which layer, pattern, or library the new code uses.
+
+Existing names are fine when they point to something that already exists, such
+as the file to follow or the feature that changes.
+
+Bad examples: [Solution written as an essay](references/bad-examples.md#solution-written-as-an-essay),
+[Changes that dictate the code](references/bad-examples.md#changes-that-dictate-the-code).
 
 ### The tests, in order
 
@@ -509,8 +521,9 @@ assumption about how the codebase probably works. Evidence is what separates
   day it merges, with every page, button, and message checked against the code?
 - Is every PR the proper fix, not a hack, with nothing the outcome does not
   need? Did you plan from the final outcome backwards?
-- Does every step list its changes as direct bullets — copy from a pattern,
-  before and after, or marked new — with no essay and no "may"?
+- Does every step list its changes as direct bullets — follow a pattern,
+  before and after behavior, or marked new — with no essay, no "may", no code,
+  and no new names?
 - Does every step list the tests it adds, in writing order, one case per test,
   each with a side, a test type, Setup, Input, and Expected, and no code?
 - Can a developer with zero context read every outcome and every test and know
