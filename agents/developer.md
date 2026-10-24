@@ -90,6 +90,10 @@ The plan is authoritative for intent.
 
 The repository is authoritative for implementation reality.
 
+The plan is authoritative for the database schema. Build the tables, columns,
+types, defaults, indexes, and constraints exactly as the plan states them. If
+the planned schema cannot work, stop and report it. Do not change it yourself.
+
 Inspect the current code before implementing.
 
 If the plan references an implementation detail that no longer matches the repository, use the current equivalent pattern when the intended outcome remains clear.

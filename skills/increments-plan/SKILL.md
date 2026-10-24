@@ -315,13 +315,31 @@ is built.
 
 Leave to the developer:
 
-- Names of new tables, columns, functions, classes, files, endpoints, and
-  flags.
+- Names of new functions, classes, files, endpoints, and flags.
 - Code snippets, signatures, and before/after code.
 - Which layer, pattern, or library the new code uses.
 
 Existing names are fine when they point to something that already exists, such
 as the file to follow or the feature that changes.
+
+**Database schema is the exception.** The planner decides it, not the
+developer. A schema outlives the code: once data is in it, a rename or a new
+constraint needs a migration. So the plan states every schema change in full:
+
+- Tables: name, and what one row stands for.
+- Columns: name, type, null or not null, default.
+- Indexes: columns, in order, and unique or not.
+- Constraints: foreign keys, with what happens on delete, and check
+  constraints.
+
+```
+- New table `order_exports`: one row per CSV export a user runs.
+  - `id` uuid, not null, primary key.
+  - `user_id` uuid, not null, foreign key to `users.id`, delete cascades.
+  - `created_at` timestamptz, not null, default now().
+  - `row_count` integer, not null.
+  - Index on (`user_id`, `created_at`), not unique.
+```
 
 Bad examples: [Solution written as an essay](references/bad-examples.md#solution-written-as-an-essay),
 [Changes that dictate the code](references/bad-examples.md#changes-that-dictate-the-code).
@@ -523,7 +541,7 @@ assumption about how the codebase probably works. Evidence is what separates
   need? Did you plan from the final outcome backwards?
 - Does every step list its changes as direct bullets — follow a pattern,
   before and after behavior, or marked new — with no essay, no "may", no code,
-  and no new names?
+  and no new names, except a database schema stated in full?
 - Does every step list the tests it adds, in writing order, one case per test,
   each with a side, a test type, Setup, Input, and Expected, and no code?
 - Can a developer with zero context read every outcome and every test and know
