@@ -150,6 +150,21 @@ Do not create abstractions solely because a future increment may need them.
 
 Implement what this increment needs now.
 
+## Frontend is mobile-first
+
+Build every frontend change for the smallest screen first, then add the larger
+screens on top.
+
+- Write the base styles for a phone width. Add tablet and desktop layouts with
+  `min-width` breakpoints. Do not start from desktop and shrink it with
+  `max-width`.
+- Use the project's existing breakpoints and responsive utilities. Do not add
+  new ones.
+- Every tap target is large enough to use with a thumb. Nothing depends on
+  hover to work.
+- No horizontal scroll at phone width.
+- Check the change at phone width before the larger widths.
+
 ## Testing
 
 The increment's `Proof` is part of the implementation contract.
