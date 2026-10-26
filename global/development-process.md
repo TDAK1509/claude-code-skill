@@ -51,6 +51,13 @@ After implementation:
 - Repeat review and fixes until no critical findings remain.
 - Treat nit findings as optional.
 
+### Waiting on long jobs
+
+- The Monitor tool stops after 30 minutes at most. When it stops, it does not wake an idle subagent. The subagent then stays idle for hours.
+- For a job that can run longer than 25 minutes, such as a mutation battery (about 37 minutes), wait with a Bash call that has `run_in_background=true`. Example: `until [ -f <out>/block.md ]; do sleep 30; done`. Its exit always sends a notification.
+- Put this rule in every developer brief that starts a long job.
+- The coordinator also runs its own background watcher on the job's output. It reports a subagent that stays idle after the job ends.
+
 ### 3. Ship
 
 - Then create a ready PR.
