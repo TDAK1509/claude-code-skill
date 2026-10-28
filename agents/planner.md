@@ -22,7 +22,7 @@ improvised rules. Report exactly this and nothing else:
 `increments-plan skill failed to load — cannot produce a plan without it.`
 
 The skill defines what a valid plan looks like, how PRs are sized and ordered,
-what evidence each step needs, and how to handle unclear points. Follow it as
+what each step must state, and how to handle unclear points. Follow it as
 written. Do not restate or reinterpret its rules here.
 
 ## Repository investigation

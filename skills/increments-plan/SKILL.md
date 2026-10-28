@@ -125,10 +125,18 @@ without it is not planned, it is only described.
 
 1. **Brief** — one or two sentences: what this PR changes for the user, in
    plain words. A reader knows what the PR is for before reading any step.
-2. **Steps** — a short list someone performs to check it, step by step.
+2. **Before / After** — one concrete example of what the user sees today, and
+   what they see once this PR merges. The reader understands what is fixed
+   without running anything.
+3. **Steps** — a short list someone performs to check it, step by step.
 
 ```
 Brief: Users can download their orders as a CSV file from the orders page.
+
+Before: The orders page has one button, Export PDF. A user who needs the orders
+in a spreadsheet copies them by hand.
+After: The orders page also has Export CSV. Clicking it downloads a `.csv` file
+with one row per order.
 
 Steps:
 - Open the orders page.
@@ -261,19 +269,62 @@ scope. Write it in three parts:
 
 For each PR, state:
 
-1. **Outcome** — the definition of done: a brief of one or two sentences, then
-   a short list of steps, each one an action and the result it produces. See
-   "The outcome is a test someone can run" above.
+1. **Outcome** — the definition of done: a brief of one or two sentences, a
+   before/after example, then a short list of steps, each one an action and
+   the result it produces. See "The outcome is a test someone can run" above.
 2. **Solution** — the direction of the changes as short, direct bullets, then the tests this PR
    adds, in the order they get written. Each test is one `tdd` loop. See "The
    solution" below.
 3. **Revert cost** — what reverting this PR alone does to production: nothing,
    or name the one thing.
-4. **Evidence** — the file, function, or existing pattern you read that this
-   step's approach is based on. Name it (`path/to/file.ts:42`, the test that
-   already covers this path, the sibling feature that does the same thing).
-   If no such evidence exists because nothing like it is in the repo yet, say
-   so instead of inventing a source.
+
+Add these only when the PR needs them:
+
+- **Bug and root cause** — for a bug fix. See "Bug fixes" below.
+- **UI styles** — for a frontend UI change. See "UI styles" below.
+
+### Bug fixes
+
+A bug-fix PR carries two more parts, before the solution:
+
+- **Bug** — what goes wrong, in the user's words: what they do, what they
+  expect, what they get instead. Add how to reproduce it.
+- **Root cause** — why it goes wrong. Name the code or data where the cause
+  lives, and the condition that triggers it. The solution then fixes this
+  cause, not the symptom.
+
+```
+Bug: A user exports orders whose customer name holds a comma, such as
+`Smith, Jane`. They expect one column for the name. The file shows `Smith` and
+`Jane` in two columns, and every later column shifts right.
+Reproduce: create an order for `Smith, Jane`, then export orders as CSV.
+
+Root cause: the CSV export joins values with commas and does not quote them
+(`app/exports/csv.py:31`). Any value with a comma splits into two columns.
+```
+
+### UI styles
+
+A frontend UI PR carries the exact styles the result must match, so the
+developer builds it to look like the design, not like a guess:
+
+- The design source: the Figma file and frame link, or the screenshot.
+- Colors, fonts, font sizes and weights, spacing, sizes, border radius, and
+  shadows, as exact values. Use the project's design tokens when they exist.
+- States: hover, focus, active, disabled, loading, empty, error.
+- Layout per screen size, phone first.
+
+```
+UI styles:
+- Design: Figma "Orders / Export" frame, https://figma.com/file/…?node-id=12-34
+- Button: background `--color-primary` (#2563EB), text white, 14px, weight 600,
+  padding 8px 16px, radius 6px.
+- Disabled: background `--color-gray-300`, text `--color-gray-500`.
+- Phone: the button is full width, below the order list. Desktop: right-aligned
+  in the page header.
+```
+
+Style values are not code. They are the target the developer builds to.
 
 ## The solution
 
@@ -519,8 +570,7 @@ producing a plan full of placeholders.
 
 A step's outcome and approach must trace back to something you actually read
 in the repository or the ticket, or to an answer you were given, not to an
-assumption about how the codebase probably works. Evidence is what separates
-"the outcome I chose" from "the outcome I guessed."
+assumption about how the codebase probably works.
 
 ## Before you finish
 
@@ -533,10 +583,11 @@ assumption about how the codebase probably works. Evidence is what separates
 - Can you stop after any step and leave production working?
 - Can you revert any single step without touching the others?
 - Is any step describable only with "and"? Split it.
-- Does every step name the evidence its approach came from, or say plainly
-  that none exists?
-- Does every step carry an outcome brief, and steps someone can perform on the
-  day it merges, with every page, button, and message checked against the code?
+- Does every bug-fix PR explain the bug and its root cause? Does every UI PR
+  carry the exact styles or the Figma link?
+- Does every step carry an outcome brief, a before/after example, and steps
+  someone can perform on the day it merges, with every page, button, and
+  message checked against the code?
 - Is every PR the proper fix, not a hack, with nothing the outcome does not
   need? Did you plan from the final outcome backwards?
 - Does every step list its changes as direct bullets — follow a pattern,
