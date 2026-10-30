@@ -25,6 +25,11 @@ not coverage.
    Review only the `+` lines. Read the surrounding code only to understand a
    changed line, never to find new problems. Do not flag a legacy flaky test
    the diff did not touch, even in the same file.
+
+   One exception: when a changed line adds or changes a stub, mock, route
+   intercept, or fake, read the code under test that the stub stands in for,
+   even outside the diff. List the requests that code makes. The finding still
+   anchors on the changed stub line.
 4. Check each added or changed line for time and randomness:
    - Reads the real clock (`now`, today's date, the current timezone) instead
      of a frozen or injected time. Breaks at midnight, month end, a DST change,
@@ -49,6 +54,16 @@ not coverage.
    - Races two tasks, threads, or requests with no synchronization.
    - Calls a real network service, third-party API, or external process
      instead of a stub.
+   - A partial stub: it intercepts some requests the code under test makes and
+     lets the rest reach a real service (fallback, passthrough,
+     `route.continue()`). Check each request the page or unit makes for the
+     stubbed resource. Each one is stubbed, or real on purpose.
+   - A made-up id, token, or record that exists only in the stub, while a
+     request about it can reach the real backend. That request fails, for
+     example with a `404`, and races the assertion.
+   - A stub branch that can never match, such as path handling for a URL the
+     filter never lets in. It shows that the stub's filter and the real URLs
+     disagree.
    - Depends on the machine: locale, OS path separator, installed tools, file
      system case, screen size.
    - Compares floating point values with exact equality.
@@ -63,6 +78,7 @@ not coverage.
 ## Report
 
 List each finding as: file:line, one-line description, the condition that
-makes it fail (for example "fails after 23:00 UTC" or "fails when run after
-`test_x`"). If nothing found, say so plainly. Do not propose fixes unless
-asked.
+makes it fail (for example "fails after 23:00 UTC", "fails when run after
+`test_x`", or "fails when the real API's `404` for `<id>` lands before the
+visibility check"). If nothing found, say so plainly. Do not propose fixes
+unless asked.
